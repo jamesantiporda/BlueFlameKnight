@@ -27,6 +27,11 @@ public class EnemyAttackState : EnemyState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
+
+        if(!enemy.IsWithinStrikingDistance)
+        {
+            enemy.StateMachine.ChangeState(enemy.ChaseState);
+        }
     }
 
     public override void PhysicsUpdate()
