@@ -16,8 +16,9 @@ namespace itsSALT.FinalCharacterController
 
         [Header("Base Movement")]
         public float runAcceleration = 0.25f;
-        public float runSpeed = 4f;
+        public float runSpeed = 2f;
         public float drag = 0.1f;
+        public float sprintSpeed = 2f;
 
         [Header("Camera Settings")]
         public float lookSenseH = 0.1f;
@@ -27,6 +28,7 @@ namespace itsSALT.FinalCharacterController
         private PlayerLocomotionInput _playerLocomotionInput;
         private Vector2 _cameraRotation = Vector2.zero;
         private Vector2 _playerTargetRotation = Vector2.zero;
+        private bool sprinting = false;
 
         private void Awake()
         {
@@ -53,8 +55,15 @@ namespace itsSALT.FinalCharacterController
             // Zero Y component of new velocity
             newVelocity = new Vector3(newVelocity.x, 0.0f, newVelocity.z);
 
+            float multiplier = 1;
+
+            if(_playerLocomotionInput.SprintInput)
+            {
+                multiplier = sprintSpeed;
+            }
+
             // Move character (unity says only call this once per frame)
-            _characterController.Move(newVelocity * Time.deltaTime);
+            _characterController.Move(newVelocity * multiplier * Time.deltaTime);
 
 
 

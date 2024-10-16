@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public EnemyStateMachine StateMachine { get; set; }
     public EnemyIdleState IdleState { get; set; }
     public EnemyChaseState ChaseState { get; set; }
+    public EnemyReadyState ReadyState { get; set; }
     public EnemyAttackState AttackState { get; set; }
 
     #endregion
@@ -30,6 +31,12 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     #endregion
 
+    #region Chase Variables
+
+    public float SprintSpeed = 2f;
+
+    #endregion
+
     private void Awake()
     {
         StateMachine = new EnemyStateMachine();
@@ -37,6 +44,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         IdleState = new EnemyIdleState(this, StateMachine);
         ChaseState = new EnemyChaseState(this, StateMachine);
         AttackState = new EnemyAttackState(this, StateMachine);
+        ReadyState = new EnemyReadyState(this, StateMachine);
     }
 
     private void Start()

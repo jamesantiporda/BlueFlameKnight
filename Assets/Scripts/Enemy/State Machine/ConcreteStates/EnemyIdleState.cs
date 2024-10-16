@@ -28,6 +28,10 @@ public class EnemyIdleState : EnemyState
         _direction = (_targetPos - enemy.transform.position).normalized;
 
         _timer = 0.0f;
+
+        Debug.Log("Idle State");
+
+        enemy.SetAnimationTrigger("WalkForward");
     }
 
     public override void ExitState()
@@ -38,8 +42,6 @@ public class EnemyIdleState : EnemyState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-
-        enemy.SetAnimationBool("Walk", true);
 
         _timer += Time.deltaTime;
 

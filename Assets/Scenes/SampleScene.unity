@@ -244,7 +244,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2.7
+  m_Radius: 1.99
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &569759481
 MonoBehaviour:
@@ -276,7 +276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 247dde11577b0ba4e880370d1110aa9b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.065
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 247dde11577b0ba4e880370d1110aa9b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -313,6 +313,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 247dde11577b0ba4e880370d1110aa9b, type: 3}
       propertyPath: m_Name
       value: blueflameknight 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 247dde11577b0ba4e880370d1110aa9b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -367,9 +371,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.26
-  m_Height: 1.95
+  m_Height: 1.92
   m_Direction: 1
-  m_Center: {x: 0, y: 0.94, z: 0}
+  m_Center: {x: 0, y: 0.94, z: 0.06}
 --- !u!54 &642327205
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -413,6 +417,7 @@ MonoBehaviour:
   RandomMovementRange: 5
   RandomMovementSpeed: 1
   RotationSpeed: 1
+  SprintSpeed: 2
 --- !u!95 &642327207
 Animator:
   serializedVersion: 7
@@ -1319,8 +1324,9 @@ MonoBehaviour:
   _characterController: {fileID: 2019009401}
   _playerCamera: {fileID: 963194227}
   runAcceleration: 40
-  runSpeed: 4
+  runSpeed: 2
   drag: 30
+  sprintSpeed: 1.5
   lookSenseH: 0.1
   lookSenseV: 0.1
   lookLimitV: 70
@@ -1342,7 +1348,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &2140943841
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ namespace itsSALT.FinalCharacterController
         public PlayerControls PlayerControls { get; private set; }
         public Vector2 MovementInput { get; private set; }
         public Vector2 LookInput { get; private set; }
+        public bool SprintInput { get; private set; }
 
         private void OnEnable()
         {
@@ -40,6 +41,11 @@ namespace itsSALT.FinalCharacterController
         public void OnStickLook(InputAction.CallbackContext context)
         {
             LookInput = context.ReadValue<Vector2>() * 2f;
+        }
+
+        public void OnSprint(InputAction.CallbackContext context)
+        {
+            SprintInput = context.started || context.performed;
         }
     }
 }

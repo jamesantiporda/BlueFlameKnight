@@ -21,7 +21,9 @@ public class EnemyChaseState : EnemyState
     {
         base.EnterState();
 
-        Debug.Log("Chase you");
+        Debug.Log("Chase State");
+
+        enemy.SetAnimationTrigger("Run");
     }
 
     public override void ExitState()
@@ -33,15 +35,21 @@ public class EnemyChaseState : EnemyState
     {
         base.FrameUpdate();
 
-        Vector3 moveDirection = (_playerTransform.position - enemy.transform.position).normalized;
+        Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
+
+        Vector3 moveDirection = (targetPosition - enemy.transform.position).normalized;
 
         enemy.RotateEnemy(moveDirection, 5f);
 
-        enemy.MoveEnemy(moveDirection * _movementSpeed);
+        enemy.MoveEnemy(moveDirection * _movementSpeed * enemy.SprintSpeed);
 
         if(enemy.IsWithinStrikingDistance)
         {
-            enemy.StateMachine.ChangeState(enemy.AttackState);
+            enemy.MoveEnemy(moveDirection * _movementSpeed * enemy.SprintSpeed/2);
+
+            enemy.SetAnimationTrigger("WalkForward");
+
+            enemy.StateMachine.ChangeState(enemy.ReadyState);
         }
 
         if(!enemy.IsAggroed)

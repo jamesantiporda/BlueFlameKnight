@@ -17,6 +17,8 @@ public class EnemyAttackState : EnemyState
     public override void EnterState()
     {
         base.EnterState();
+
+        Debug.Log("Attack State");
     }
 
     public override void ExitState()
@@ -27,11 +29,6 @@ public class EnemyAttackState : EnemyState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-
-        if(!enemy.IsWithinStrikingDistance)
-        {
-            enemy.StateMachine.ChangeState(enemy.ChaseState);
-        }
     }
 
     public override void PhysicsUpdate()
