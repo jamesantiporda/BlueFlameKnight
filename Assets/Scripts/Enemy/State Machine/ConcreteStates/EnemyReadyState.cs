@@ -13,6 +13,8 @@ public class EnemyReadyState : EnemyState
 
     private float _speed = 0.5f;
 
+    private int _decisionCount;
+
     public EnemyReadyState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -33,6 +35,7 @@ public class EnemyReadyState : EnemyState
 
         _decisionTimer = 0.0f;
         _decision = -1;
+        _decisionCount = 0;
 
         enemy.SetAnimationTrigger("Idle");
     }
@@ -54,9 +57,17 @@ public class EnemyReadyState : EnemyState
 
         if(_decisionTimer < 0.0f)
         {
+            _decisionCount++;
+
+            if(_decisionCount >= 2)
+            {
+                enemy.StateMachine.ChangeState(enemy.AttackState);
+                return;
+            }
+
             enemy.MoveEnemy(Vector3.zero);
 
-            _decision = Random.Range(0, 4);
+            _decision = Random.Range(0, 5);
 
             _decisionTimer = Random.Range(2.0f, 5.0f);
 
@@ -74,6 +85,10 @@ public class EnemyReadyState : EnemyState
                 case 3:
                     enemy.SetAnimationTrigger("WalkBackward");
                     break;
+                case 4:
+                    enemy.StateMachine.ChangeState(enemy.AttackState);
+                    return;
+                    break;
                 default:
                     break;
             }
@@ -83,7 +98,7 @@ public class EnemyReadyState : EnemyState
             _decisionTimer -= Time.deltaTime;
         }
 
-        Debug.Log(_decisionTimer);
+        //Debug.Log(_decisionTimer);
 
         switch(_decision)
         {

@@ -13,6 +13,9 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public bool IsAggroed { get; set; }
     public bool IsWithinStrikingDistance { get; set; }
 
+    public bool IsAttacking { get; set; }
+    public bool IsTracking { get; set; }
+
     #region State Machine Variables
 
     public EnemyStateMachine StateMachine { get; set; }
@@ -20,6 +23,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public EnemyChaseState ChaseState { get; set; }
     public EnemyReadyState ReadyState { get; set; }
     public EnemyAttackState AttackState { get; set; }
+    public EnemyRecoveryState RecoveryState { get; set; }
 
     #endregion
 
@@ -45,6 +49,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         ChaseState = new EnemyChaseState(this, StateMachine);
         AttackState = new EnemyAttackState(this, StateMachine);
         ReadyState = new EnemyReadyState(this, StateMachine);
+        RecoveryState = new EnemyRecoveryState(this, StateMachine);
     }
 
     private void Start()
@@ -58,6 +63,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         StateMachine.Initialize(IdleState);
 
         Debug.Log(transform.forward);
+
+        IsAggroed = false;
     }
 
     private void Update()
@@ -144,6 +151,21 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void SetAnimationTrigger(string name)
     {
         animator.SetTrigger(name);
+    }
+
+    public void SetIsNotAttacking()
+    {
+        IsAttacking = false;
+    }
+
+    public void StartTracking()
+    {
+        IsTracking = true;
+    }
+
+    public void StopTracking()
+    {
+        IsTracking = false;
     }
 
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)

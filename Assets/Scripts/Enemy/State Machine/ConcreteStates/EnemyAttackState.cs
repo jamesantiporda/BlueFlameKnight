@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class EnemyAttackState : EnemyState
 {
+    private float _attackTimer;
+    private Transform _playerTransform;
+
     public EnemyAttackState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
-
+        _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     public override void AnimationTriggerEvent(Enemy.AnimationTriggerType triggerType)
@@ -19,6 +22,14 @@ public class EnemyAttackState : EnemyState
         base.EnterState();
 
         Debug.Log("Attack State");
+
+        _attackTimer = 0.0f;
+
+        enemy.MoveEnemy(Vector3.zero);
+
+        enemy.SetAnimationTrigger("Attack");
+
+        enemy.IsAttacking = true;
     }
 
     public override void ExitState()
@@ -29,6 +40,22 @@ public class EnemyAttackState : EnemyState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
+
+        _attackTimer += Time.deltaTime;
+
+        if(enemy.IsTracking)
+        {
+            Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
+
+            Vector3 moveDirection = (targetPosition - enemy.transform.position).normalized;
+
+            enemy.RotateEnemy(moveDirection, 5f);
+        }
+
+        if( !enemy.IsAttacking )
+        {
+            enemy.StateMachine.ChangeState(enemy.RecoveryState);
+        }
     }
 
     public override void PhysicsUpdate()
