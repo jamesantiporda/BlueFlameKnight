@@ -69,7 +69,7 @@ public class EnemyReadyState : EnemyState
 
             _decision = Random.Range(0, 5);
 
-            _decisionTimer = Random.Range(2.0f, 5.0f);
+            _decisionTimer = Random.Range(0.5f, 1.5f);
 
             switch (_decision)
             {
@@ -131,7 +131,7 @@ public class EnemyReadyState : EnemyState
         }
         else
         {
-            _timer = 2.0f;
+            _timer = 0.4f;
         }
     }
 

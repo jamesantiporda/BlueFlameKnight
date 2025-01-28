@@ -29,6 +29,12 @@ public class EnemyAttackState : EnemyState
 
         enemy.SetAnimationTrigger("Attack");
 
+        int randomAttack = 0;
+
+        randomAttack = Random.Range(0, 6);
+
+        enemy.SetAnimationInt("AttackNo", randomAttack);
+
         enemy.IsAttacking = true;
     }
 
@@ -49,7 +55,7 @@ public class EnemyAttackState : EnemyState
 
             Vector3 moveDirection = (targetPosition - enemy.transform.position).normalized;
 
-            enemy.RotateEnemy(moveDirection, 5f);
+            enemy.RotateEnemy(moveDirection, 7f);
         }
 
         if( !enemy.IsAttacking )
