@@ -49,6 +49,20 @@ public class EnemyRecoveryState : EnemyState
             enemy.SetAnimationTrigger("WalkLeft");
         }
 
+        if (dotProduct < 0f)
+        {
+            int backswing_random = Random.Range(0, 4);
+
+            if (backswing_random == 0)
+            {
+                enemy.ResetAnimationTriggers();
+
+                enemy.SetAnimationInt("AttackNo", -3);
+
+                enemy.StateMachine.ChangeState(enemy.AttackState);
+            }
+        }
+
         //enemy.RotateEnemy(moveDirection, 5f);
 
     }
@@ -66,9 +80,9 @@ public class EnemyRecoveryState : EnemyState
 
         Vector3 moveDirection = (targetPosition - enemy.transform.position).normalized;
 
-        enemy.RotateEnemy(moveDirection, 4f);
-
         float dotProduct = Vector3.Dot(enemy.transform.forward, moveDirection);
+
+        enemy.RotateEnemy(moveDirection, 4f);
 
         if (dotProduct >= 0.75f)
         {

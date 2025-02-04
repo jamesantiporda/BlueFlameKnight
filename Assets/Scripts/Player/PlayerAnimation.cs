@@ -10,6 +10,7 @@ namespace itsSALT.FinalCharacterController
         [SerializeField] private float locomotionBlendSpeed = 0.02f;
 
         private PlayerLocomotionInput _playerLocomotionInput;
+        private PlayerCombatInput _playerCombatInput;
         private PlayerState _playerState;
 
         private static int inputXHash = Animator.StringToHash("inputX");
@@ -22,6 +23,7 @@ namespace itsSALT.FinalCharacterController
         private void Awake()
         {
             _playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
+            _playerCombatInput = GetComponent<PlayerCombatInput>();
             _playerState = GetComponent<PlayerState>();
         }
 
@@ -44,6 +46,11 @@ namespace itsSALT.FinalCharacterController
             _currentBlendInput = Vector3.Lerp(_currentBlendInput, inputTarget, locomotionBlendSpeed * Time.deltaTime);
 
             //Debug.Log("input: " + inputTarget);
+
+            if(_playerCombatInput.LightAttackInput)
+            {
+                _animator.SetTrigger("LightAttack");
+            }
 
             _animator.SetBool(isRollingHash, isRolling);
             _animator.SetFloat(inputXHash, _currentBlendInput.x);

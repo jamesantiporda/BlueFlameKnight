@@ -7,6 +7,8 @@ public class EnemyChaseState : EnemyState
     private Transform _playerTransform;
     private float _movementSpeed = 1.75f;
 
+    private float _outOfRangeTimer = 0.0f;
+
     public EnemyChaseState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -24,6 +26,8 @@ public class EnemyChaseState : EnemyState
         Debug.Log("Chase State");
 
         enemy.SetAnimationTrigger("Run");
+
+        _outOfRangeTimer = 0.0f;
     }
 
     public override void ExitState()
@@ -47,9 +51,36 @@ public class EnemyChaseState : EnemyState
         {
             enemy.MoveEnemy(moveDirection * _movementSpeed * enemy.SprintSpeed/2);
 
-            enemy.SetAnimationTrigger("WalkForward");
+            int run_attack_random = Random.Range(0, 5);
 
-            enemy.StateMachine.ChangeState(enemy.ReadyState);
+            if(run_attack_random == 0)
+            {
+                enemy.SetAnimationInt("AttackNo", -1);
+
+                enemy.StateMachine.ChangeState(enemy.AttackState);
+            }
+            else
+            {
+                enemy.SetAnimationTrigger("WalkForward");
+
+                enemy.StateMachine.ChangeState(enemy.ReadyState);
+            }
+        }
+        else
+        {
+            _outOfRangeTimer += Time.deltaTime;
+
+            if(_outOfRangeTimer > 5.0f)
+            {
+                int range_attack_random = Random.Range(0, 5);
+
+                if(range_attack_random == 0)
+                {
+                    enemy.SetAnimationInt("AttackNo", -2);
+
+                    enemy.StateMachine.ChangeState(enemy.AttackState);
+                }
+            }
         }
 
         if(!enemy.IsAggroed)

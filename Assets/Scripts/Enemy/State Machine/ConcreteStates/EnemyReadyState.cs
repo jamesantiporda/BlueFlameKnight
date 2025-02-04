@@ -69,7 +69,7 @@ public class EnemyReadyState : EnemyState
 
             _decision = Random.Range(0, 5);
 
-            _decisionTimer = Random.Range(0.5f, 1.5f);
+            _decisionTimer = Random.Range(1.0f, 2f);
 
             switch (_decision)
             {
@@ -80,14 +80,20 @@ public class EnemyReadyState : EnemyState
                     enemy.SetAnimationTrigger("WalkLeft");
                     break;
                 case 2:
-                    enemy.SetAnimationTrigger("WalkForward");
+                    if (Vector3.Distance(enemy.transform.position, _playerTransform.transform.position) < 1.0f)
+                    {
+                        enemy.SetAnimationTrigger("WalkBackward");
+                    }
+                    else
+                    {
+                        enemy.SetAnimationTrigger("WalkForward");
+                    }
                     break;
                 case 3:
                     enemy.SetAnimationTrigger("WalkBackward");
                     break;
                 case 4:
                     enemy.StateMachine.ChangeState(enemy.AttackState);
-                    return;
                     break;
                 default:
                     break;
@@ -109,13 +115,29 @@ public class EnemyReadyState : EnemyState
                 enemy.MoveEnemy(-enemy.transform.right * _speed);
                 break;
             case 2:
-                enemy.MoveEnemy(enemy.transform.forward * _speed);
+                if (Vector3.Distance(enemy.transform.position, _playerTransform.transform.position) < 1.0f)
+                {
+                    enemy.MoveEnemy(-enemy.transform.forward * _speed);
+                }
+                else
+                {
+                    enemy.MoveEnemy(enemy.transform.forward * _speed);
+                }
                 break;
             case 3:
                 enemy.MoveEnemy(-enemy.transform.forward * _speed);
                 break;
             default:
                 break;
+        }
+
+        if(Vector3.Distance(enemy.transform.position, _playerTransform.transform.position) < 1.0f)
+        {
+            if(_decision == 2)
+            {
+                enemy.SetAnimationTrigger("WalkBackward");
+                enemy.MoveEnemy(-enemy.transform.forward * _speed);
+            }
         }
 
 
@@ -126,12 +148,13 @@ public class EnemyReadyState : EnemyState
 
             if(_timer < 0)
             {
+                enemy.ResetAnimationTriggers();
                 enemy.StateMachine.ChangeState(enemy.ChaseState);
             }
         }
         else
         {
-            _timer = 0.4f;
+            _timer = 0.8f;
         }
     }
 

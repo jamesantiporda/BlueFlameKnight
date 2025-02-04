@@ -264,6 +264,45 @@ namespace itsSALT.FinalCharacterController
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""PlayerCombatMap"",
+            ""id"": ""f5f7a4c2-df40-4be9-acb4-71df2f518871"",
+            ""actions"": [
+                {
+                    ""name"": ""LightAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""dbf695aa-02e5-4ff6-9c12-f65e1c1ffdc1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""4023a04d-ca27-4cd8-bd61-a632d0f077b4"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LightAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8b949b0b-6840-4f64-b0b4-6ac1bcf0adfd"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LightAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -275,6 +314,9 @@ namespace itsSALT.FinalCharacterController
             m_PlayerLocomotionMap_StickLook = m_PlayerLocomotionMap.FindAction("StickLook", throwIfNotFound: true);
             m_PlayerLocomotionMap_Sprint = m_PlayerLocomotionMap.FindAction("Sprint", throwIfNotFound: true);
             m_PlayerLocomotionMap_ToggleLock = m_PlayerLocomotionMap.FindAction("ToggleLock", throwIfNotFound: true);
+            // PlayerCombatMap
+            m_PlayerCombatMap = asset.FindActionMap("PlayerCombatMap", throwIfNotFound: true);
+            m_PlayerCombatMap_LightAttack = m_PlayerCombatMap.FindAction("LightAttack", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -410,6 +452,52 @@ namespace itsSALT.FinalCharacterController
             }
         }
         public PlayerLocomotionMapActions @PlayerLocomotionMap => new PlayerLocomotionMapActions(this);
+
+        // PlayerCombatMap
+        private readonly InputActionMap m_PlayerCombatMap;
+        private List<IPlayerCombatMapActions> m_PlayerCombatMapActionsCallbackInterfaces = new List<IPlayerCombatMapActions>();
+        private readonly InputAction m_PlayerCombatMap_LightAttack;
+        public struct PlayerCombatMapActions
+        {
+            private @PlayerControls m_Wrapper;
+            public PlayerCombatMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+            public InputAction @LightAttack => m_Wrapper.m_PlayerCombatMap_LightAttack;
+            public InputActionMap Get() { return m_Wrapper.m_PlayerCombatMap; }
+            public void Enable() { Get().Enable(); }
+            public void Disable() { Get().Disable(); }
+            public bool enabled => Get().enabled;
+            public static implicit operator InputActionMap(PlayerCombatMapActions set) { return set.Get(); }
+            public void AddCallbacks(IPlayerCombatMapActions instance)
+            {
+                if (instance == null || m_Wrapper.m_PlayerCombatMapActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_PlayerCombatMapActionsCallbackInterfaces.Add(instance);
+                @LightAttack.started += instance.OnLightAttack;
+                @LightAttack.performed += instance.OnLightAttack;
+                @LightAttack.canceled += instance.OnLightAttack;
+            }
+
+            private void UnregisterCallbacks(IPlayerCombatMapActions instance)
+            {
+                @LightAttack.started -= instance.OnLightAttack;
+                @LightAttack.performed -= instance.OnLightAttack;
+                @LightAttack.canceled -= instance.OnLightAttack;
+            }
+
+            public void RemoveCallbacks(IPlayerCombatMapActions instance)
+            {
+                if (m_Wrapper.m_PlayerCombatMapActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            public void SetCallbacks(IPlayerCombatMapActions instance)
+            {
+                foreach (var item in m_Wrapper.m_PlayerCombatMapActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_PlayerCombatMapActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        public PlayerCombatMapActions @PlayerCombatMap => new PlayerCombatMapActions(this);
         public interface IPlayerLocomotionMapActions
         {
             void OnMovement(InputAction.CallbackContext context);
@@ -417,6 +505,10 @@ namespace itsSALT.FinalCharacterController
             void OnStickLook(InputAction.CallbackContext context);
             void OnSprint(InputAction.CallbackContext context);
             void OnToggleLock(InputAction.CallbackContext context);
+        }
+        public interface IPlayerCombatMapActions
+        {
+            void OnLightAttack(InputAction.CallbackContext context);
         }
     }
 }

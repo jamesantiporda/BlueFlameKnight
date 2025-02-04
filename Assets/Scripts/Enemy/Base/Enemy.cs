@@ -16,6 +16,9 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public bool IsAttacking { get; set; }
     public bool IsTracking { get; set; }
 
+    public bool IsTurningClockwise { get; set; }
+    public bool IsMovingWhileAttacking { get; set; }
+
     #region State Machine Variables
 
     public EnemyStateMachine StateMachine { get; set; }
@@ -102,7 +105,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     {
         velocity = new Vector3(velocity.x, 0f, velocity.z);
 
-        RB.velocity = velocity;
+        transform.position += velocity * Time.deltaTime;
     }
 
     public void RotateEnemy(Vector3 targetDirection, float speed)
@@ -114,6 +117,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         Debug.DrawRay(transform.position, newDirection, Color.red);
 
         transform.rotation = Quaternion.LookRotation(newDirection);
+    }
+
+    public void RotateEnemyClockwise(float speed)
+    {
+        transform.RotateAround(transform.position, Vector3.up, 4 * speed * Time.deltaTime);
     }
     #endregion
 
@@ -153,6 +161,17 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         animator.SetTrigger(name);
     }
 
+    public void ResetAnimationTriggers()
+    {
+        foreach (var param in animator.parameters)
+        {
+            if(param.type == AnimatorControllerParameterType.Trigger)
+            {
+                animator.ResetTrigger(param.name);
+            }
+        }
+    }
+
     public void SetIsNotAttacking()
     {
         IsAttacking = false;
@@ -166,6 +185,26 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void StopTracking()
     {
         IsTracking = false;
+    }
+
+    public void StartMovingWhileAttacking()
+    {
+        IsMovingWhileAttacking = true;
+    }
+
+    public void StopMovingWhileAttacking()
+    {
+        IsMovingWhileAttacking = false;
+    }
+
+    public void StartTurningClockwise()
+    {
+        IsTurningClockwise = true;
+    }
+
+    public void StopTurningClockwise()
+    {
+        IsTurningClockwise = false;
     }
 
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)

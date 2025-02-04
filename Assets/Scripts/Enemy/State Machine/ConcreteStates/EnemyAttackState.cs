@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class EnemyAttackState : EnemyState
 {
     private float _attackTimer;
     private Transform _playerTransform;
+    private float _movementSpeed = 1.75f;
 
     public EnemyAttackState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
@@ -27,19 +29,24 @@ public class EnemyAttackState : EnemyState
 
         enemy.MoveEnemy(Vector3.zero);
 
+        if(enemy.animator.GetInteger("AttackNo") >= 0)
+        {
+            int randomAttack = 0;
+
+            randomAttack = Random.Range(0, 6);
+
+            enemy.SetAnimationInt("AttackNo", randomAttack);
+        }
+
         enemy.SetAnimationTrigger("Attack");
-
-        int randomAttack = 0;
-
-        randomAttack = Random.Range(0, 6);
-
-        enemy.SetAnimationInt("AttackNo", randomAttack);
 
         enemy.IsAttacking = true;
     }
 
     public override void ExitState()
     {
+        enemy.SetAnimationInt("AttackNo", 0);
+
         base.ExitState();
     }
 
@@ -49,12 +56,25 @@ public class EnemyAttackState : EnemyState
 
         _attackTimer += Time.deltaTime;
 
+        Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
+
+        Vector3 moveDirection = (targetPosition - enemy.transform.position).normalized;
+
+        // Running attack
+        if (enemy.IsMovingWhileAttacking)
+        {
+            enemy.MoveEnemy(moveDirection * _movementSpeed/2 * enemy.SprintSpeed);
+        }
+
+        // Backswing attack
+        if(enemy.IsTurningClockwise)
+        {
+            enemy.RotateEnemyClockwise(180f);
+        }
+
+        // Rotate towards player while attacking
         if(enemy.IsTracking)
         {
-            Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
-
-            Vector3 moveDirection = (targetPosition - enemy.transform.position).normalized;
-
             enemy.RotateEnemy(moveDirection, 7f);
         }
 

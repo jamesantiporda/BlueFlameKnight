@@ -21,6 +21,10 @@ namespace itsSALT.FinalCharacterController
         public float RotationMismatch { get; private set; } = 0f;
         public bool IsRotatingToTarget { get; private set; } = false;
 
+        public bool IsAttacking { get; private set; } = false;
+
+        public bool IsMovingWhileAttacking { get; private set; } = false;
+
         [Header("Base Movement")]
         public float runAcceleration = 0.25f;
         public float runSpeed = 2f;
@@ -30,6 +34,7 @@ namespace itsSALT.FinalCharacterController
         public float movingThreshold = 0.01f;
         public float rollSpeed = 5f;
         public float rollCooldown = 0.5f;
+        public float attackMoveSpeed = 1f;
 
         [Header("Animation")]
         public float playerModelRotationSpeed = 10f;
@@ -41,6 +46,7 @@ namespace itsSALT.FinalCharacterController
         public float lookLimitV = 70f;
 
         private PlayerLocomotionInput _playerLocomotionInput;
+        private PlayerCombatInput _playerCombatInput;
         private PlayerState _playerState;
 
         private Vector2 _cameraRotation = Vector2.zero;
@@ -56,6 +62,7 @@ namespace itsSALT.FinalCharacterController
         private void Awake()
         {
             _playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
+            _playerCombatInput = GetComponent<PlayerCombatInput>();
             _playerState = GetComponent<PlayerState>();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -67,17 +74,29 @@ namespace itsSALT.FinalCharacterController
         {
             UpdateMovementState();
             HandleLateralMovement();
+
+            if(IsMovingWhileAttacking)
+            {
+                Vector3 attackDir = new Vector3(transform.forward.x, 0.0f, transform.forward.z);
+
+                MovePlayer(attackDir, attackMoveSpeed);
+            }
+        }
+
+        public void MovePlayer(Vector3 direction, float speed)
+        {
+            _characterController.Move(speed * direction * Time.deltaTime);
         }
 
         private void UpdateMovementState()
         {
-            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
+            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsAttacking)
             {
                 bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;
                 bool isMovingLaterally = IsMovingLaterally();
                 bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally;
                 bool isGrounded = IsGrounded();
-                bool isRolling = _playerLocomotionInput.RollInput && isMovingLaterally;
+                bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput;
                 bool isStrafing = _playerLocomotionInput.LockToggledOn && isMovingLaterally;
 
                 if(isRolling)
@@ -126,18 +145,20 @@ namespace itsSALT.FinalCharacterController
 
             //Debug.Log("Target Dir: " + _playerTargetDirection);
 
-            if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling)
+            if(!IsAttacking)
             {
-                Vector3 rollDirection3D = new Vector3(rollDirection.x, 0.0f, rollDirection.y);
-                rollDirection3D.Normalize();
-                _characterController.Move(rollSpeed * rollDirection3D * Time.deltaTime);
+                if (_playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling)
+                {
+                    Vector3 rollDirection3D = new Vector3(rollDirection.x, 0.0f, rollDirection.y);
+                    rollDirection3D.Normalize();
+                    _characterController.Move(rollSpeed * rollDirection3D * Time.deltaTime);
+                }
+                else
+                {
+                    // Move character (unity says only call this once per frame)
+                    _characterController.Move(newVelocity * _playerLocomotionInput.MovementInput.magnitude / 10 * Time.deltaTime);
+                }
             }
-            else
-            {
-                // Move character (unity says only call this once per frame)
-                _characterController.Move(newVelocity * Time.deltaTime);
-            }
-            
         }
         #endregion
 
@@ -162,7 +183,7 @@ namespace itsSALT.FinalCharacterController
             Vector3 targetDirection = new Vector3(_playerTargetDirection.x, 0.0f, _playerTargetDirection.y);
             targetDirection.Normalize();
 
-            if(IsMovingLaterally() || _rotatingToTargetTimer > 0)
+            if(IsMovingLaterally() || IsAttacking || _rotatingToTargetTimer > 0)
             {
                 Vector3 lockDirectionProj = _targetEnemy.transform.position - transform.position;
                 lockDirectionProj = new Vector3(lockDirectionProj.x, 0.0f, lockDirectionProj.z);
@@ -193,7 +214,9 @@ namespace itsSALT.FinalCharacterController
 
                 lockDirection.Normalize();
 
-                _playerCamera.transform.rotation = Quaternion.LookRotation(lockDirection);
+                Quaternion cameraFinalRotation = Quaternion.LookRotation(lockDirection);
+
+                _playerCamera.transform.rotation = cameraFinalRotation; //Quaternion.Lerp(_playerCamera.transform.rotation, cameraFinalRotation, playerModelRotationSpeed * Time.deltaTime);
                 
             }
             else
@@ -220,6 +243,26 @@ namespace itsSALT.FinalCharacterController
         private bool IsGrounded()
         {
             return _characterController.isGrounded;
+        }
+
+        public void StartAttacking()
+        {
+            IsAttacking = true;
+        }
+
+        public void StopAttacking()
+        {
+            IsAttacking = false;
+        }
+
+        public void StartMovingWhileAttacking()
+        {
+            IsMovingWhileAttacking = true;
+        }
+
+        public void StopMovingWhileAttacking()
+        {
+            IsMovingWhileAttacking = false;
         }
         #endregion
 
