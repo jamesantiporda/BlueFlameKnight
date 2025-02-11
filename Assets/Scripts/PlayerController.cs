@@ -25,6 +25,14 @@ namespace itsSALT.FinalCharacterController
 
         public bool IsMovingWhileAttacking { get; private set; } = false;
 
+        public bool IsMovingRolling { get; private set; } = false;
+
+        public bool IsLockedInAnimation { get; private set; } = false;
+
+        public bool IsMoveable { get; private set; } = false;
+
+        public bool IsKnockedBack { get; private set; } = false;
+
         [Header("Base Movement")]
         public float runAcceleration = 0.25f;
         public float runSpeed = 2f;
@@ -35,6 +43,7 @@ namespace itsSALT.FinalCharacterController
         public float rollSpeed = 5f;
         public float rollCooldown = 0.5f;
         public float attackMoveSpeed = 1f;
+        public float knockbackSpeed = 1f;
 
         [Header("Animation")]
         public float playerModelRotationSpeed = 10f;
@@ -54,6 +63,7 @@ namespace itsSALT.FinalCharacterController
         private bool sprinting = false;
         private Vector2 rollDirection = Vector2.zero;
         private Vector2 _playerTargetDirection = Vector2.zero;
+        public Vector3 knockbackDirection = Vector3.zero;
 
         private float _rotatingToTargetTimer = 0f;
         #endregion
@@ -81,6 +91,13 @@ namespace itsSALT.FinalCharacterController
 
                 MovePlayer(attackDir, attackMoveSpeed);
             }
+
+            if(IsKnockedBack)
+            {
+                Vector3 knockbackDir = knockbackDirection;
+
+                MovePlayer(knockbackDir, knockbackSpeed);
+            }
         }
 
         public void MovePlayer(Vector3 direction, float speed)
@@ -90,7 +107,7 @@ namespace itsSALT.FinalCharacterController
 
         private void UpdateMovementState()
         {
-            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsAttacking)
+            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsAttacking && !IsLockedInAnimation)
             {
                 bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;
                 bool isMovingLaterally = IsMovingLaterally();
@@ -145,18 +162,25 @@ namespace itsSALT.FinalCharacterController
 
             //Debug.Log("Target Dir: " + _playerTargetDirection);
 
-            if(!IsAttacking)
+            if(!IsAttacking && !IsLockedInAnimation)
             {
                 if (_playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling)
                 {
                     Vector3 rollDirection3D = new Vector3(rollDirection.x, 0.0f, rollDirection.y);
                     rollDirection3D.Normalize();
-                    _characterController.Move(rollSpeed * rollDirection3D * Time.deltaTime);
+
+                    if(IsMovingRolling)
+                    {
+                        _characterController.Move(rollSpeed * rollDirection3D * Time.deltaTime);
+                    }
                 }
                 else
                 {
                     // Move character (unity says only call this once per frame)
-                    _characterController.Move(newVelocity * _playerLocomotionInput.MovementInput.magnitude / 10 * Time.deltaTime);
+                    if(IsMoveable)
+                    {
+                        _characterController.Move(newVelocity * _playerLocomotionInput.MovementInput.magnitude / 10 * Time.deltaTime);
+                    }
                 }
             }
         }
@@ -198,7 +222,10 @@ namespace itsSALT.FinalCharacterController
                     finalRotation = targetRotationX;
                 }
 
-                transform.rotation = Quaternion.Lerp(transform.rotation, finalRotation, playerModelRotationSpeed * Time.deltaTime);
+                if (!IsLockedInAnimation)
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, finalRotation, playerModelRotationSpeed * Time.deltaTime);
+                }
 
                 if(Mathf.Abs(RotationMismatch) > rotationTolerance)
                 {
@@ -263,6 +290,53 @@ namespace itsSALT.FinalCharacterController
         public void StopMovingWhileAttacking()
         {
             IsMovingWhileAttacking = false;
+        }
+
+        public void StartKnockback()
+        {
+            IsKnockedBack = true;
+        }
+
+        public void StopKnockback()
+        {
+            IsKnockedBack = false;
+        }
+
+        public void StartMovingWhileRolling()
+        {
+            IsMovingRolling = true;
+        }
+
+        public void StopMovingWhileRolling()
+        {
+            IsMovingRolling = false;
+        }
+
+        public void LockInAnimation()
+        {
+            IsLockedInAnimation = true;
+        }
+
+        public void UnlockOutOfAnimation()
+        {
+            IsLockedInAnimation = false;
+
+            _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+        }
+        
+        public void MakeMoveable()
+        {
+            IsMoveable = true;
+        }
+
+        public void MakeUnmoveable()
+        {
+            IsMoveable = false;
+        }
+
+        public void Damage()
+        {
+            _playerState.SetPlayerMovementState(PlayerMovementState.Damaged);
         }
         #endregion
 

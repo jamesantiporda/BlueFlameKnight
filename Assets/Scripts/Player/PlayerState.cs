@@ -22,5 +22,6 @@ namespace itsSALT.FinalCharacterController
         Sprinting = 3,
         Rolling = 4,
         Strafing = 5,
+        Damaged = 6,
     }
 }

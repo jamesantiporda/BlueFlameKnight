@@ -80,6 +80,7 @@ public class EnemyAttackState : EnemyState
 
         if( !enemy.IsAttacking )
         {
+            enemy.ResetAttackType();
             enemy.StateMachine.ChangeState(enemy.RecoveryState);
         }
     }

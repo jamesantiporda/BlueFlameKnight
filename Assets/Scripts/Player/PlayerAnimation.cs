@@ -12,6 +12,7 @@ namespace itsSALT.FinalCharacterController
         private PlayerLocomotionInput _playerLocomotionInput;
         private PlayerCombatInput _playerCombatInput;
         private PlayerState _playerState;
+        private PlayerController _playerController;
 
         private static int inputXHash = Animator.StringToHash("inputX");
         private static int inputYHash = Animator.StringToHash("inputY");
@@ -25,6 +26,7 @@ namespace itsSALT.FinalCharacterController
             _playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
             _playerCombatInput = GetComponent<PlayerCombatInput>();
             _playerState = GetComponent<PlayerState>();
+            _playerController = GetComponent<PlayerController>();
         }
 
         private void Update()
@@ -47,7 +49,7 @@ namespace itsSALT.FinalCharacterController
 
             //Debug.Log("input: " + inputTarget);
 
-            if(_playerCombatInput.LightAttackInput)
+            if(_playerCombatInput.LightAttackInput && !_playerController.IsLockedInAnimation)
             {
                 _animator.SetTrigger("LightAttack");
             }

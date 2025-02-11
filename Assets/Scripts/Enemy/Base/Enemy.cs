@@ -19,6 +19,10 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public bool IsTurningClockwise { get; set; }
     public bool IsMovingWhileAttacking { get; set; }
 
+    public enum Attack { Normal, Knockback, Launch }
+
+    private Attack currentAttackType = Attack.Normal;
+
     #region State Machine Variables
 
     public EnemyStateMachine StateMachine { get; set; }
@@ -205,6 +209,36 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void StopTurningClockwise()
     {
         IsTurningClockwise = false;
+    }
+
+    public void SetAttackType(int type)
+    {
+        if(type == 0)
+        {
+            currentAttackType = Attack.Normal;
+        }
+        else if(type == 1)
+        {
+            currentAttackType = Attack.Knockback;
+        }
+        else if(type == 2)
+        {
+            currentAttackType = Attack.Launch;
+        }
+        else
+        {
+            currentAttackType = Attack.Normal;
+        }
+    }
+
+    public void ResetAttackType()
+    {
+        currentAttackType = Attack.Normal;
+    }
+
+    public Attack ReturnAttackType()
+    {
+        return currentAttackType;
     }
 
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)
