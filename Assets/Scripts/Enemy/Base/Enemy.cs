@@ -145,6 +145,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     #region Animation Triggers
 
+    public void Flinch()
+    {
+        animator.Play("Flinch", 1, 0);
+    }
+
     public void SetAnimationBool(string name, bool value)
     {
         animator.SetBool(name, value);
