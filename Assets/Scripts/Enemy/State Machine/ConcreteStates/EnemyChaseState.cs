@@ -70,9 +70,9 @@ public class EnemyChaseState : EnemyState
         {
             _outOfRangeTimer += Time.deltaTime;
 
-            if(_outOfRangeTimer > 5.0f)
+            if(_outOfRangeTimer > 2.5f)
             {
-                int range_attack_random = Random.Range(0, 5);
+                int range_attack_random = Random.Range(0, 3);
 
                 if(range_attack_random == 0)
                 {

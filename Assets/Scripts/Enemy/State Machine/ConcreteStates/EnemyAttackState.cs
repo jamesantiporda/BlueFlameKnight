@@ -38,6 +38,9 @@ public class EnemyAttackState : EnemyState
             enemy.SetAnimationInt("AttackNo", randomAttack);
         }
 
+        // GRAB FORCE
+        enemy.SetAnimationInt("AttackNo", 5);
+
         enemy.SetAnimationTrigger("Attack");
 
         enemy.IsAttacking = true;

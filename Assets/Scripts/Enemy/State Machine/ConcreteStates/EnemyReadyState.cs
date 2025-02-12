@@ -49,6 +49,18 @@ public class EnemyReadyState : EnemyState
     {
         base.FrameUpdate();
 
+        // RETREAT DECISION
+
+        if(enemy.damageCounter >= enemy.damageThreshold)
+        {
+            int retreat_random = Random.Range(0, 4);
+
+            if(retreat_random == 0)
+            {
+                enemy.StateMachine.ChangeState(enemy.RetreatState);
+            }
+        }
+
         Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
 
         Vector3 targetDirection = (targetPosition - enemy.transform.position).normalized;

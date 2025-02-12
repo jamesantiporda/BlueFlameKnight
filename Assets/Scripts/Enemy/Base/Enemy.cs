@@ -6,6 +6,10 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 {
     [field: SerializeField] public float MaxHealth { get; set; } = 100f;
     public float CurrentHealth { get; set; }
+
+    public GameObject rangedAttackObject;
+
+    public Transform rangedAttackEmissionPoint;
     public Rigidbody RB { get; set; }
 
     public Animator animator { get; set; }
@@ -31,6 +35,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public EnemyReadyState ReadyState { get; set; }
     public EnemyAttackState AttackState { get; set; }
     public EnemyRecoveryState RecoveryState { get; set; }
+    public EnemyRetreatState RetreatState { get; set; }
 
     #endregion
 
@@ -48,6 +53,13 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     #endregion
 
+    #region General Variables
+
+    public int damageCounter = 0;
+    public int damageThreshold = 5;
+
+    #endregion
+
     private void Awake()
     {
         StateMachine = new EnemyStateMachine();
@@ -57,6 +69,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         AttackState = new EnemyAttackState(this, StateMachine);
         ReadyState = new EnemyReadyState(this, StateMachine);
         RecoveryState = new EnemyRecoveryState(this, StateMachine);
+        RetreatState = new EnemyRetreatState(this, StateMachine);
     }
 
     private void Start()
@@ -147,6 +160,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public void Flinch()
     {
+        damageCounter++;
+
         animator.Play("Flinch", 1, 0);
     }
 
@@ -244,6 +259,16 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public Attack ReturnAttackType()
     {
         return currentAttackType;
+    }
+
+    public void ChangeToIdleState()
+    {
+        StateMachine.ChangeState(IdleState);
+    }
+
+    public void SpawnRangedAttack()
+    {
+        Instantiate(rangedAttackObject, rangedAttackEmissionPoint.position, Quaternion.identity);
     }
 
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)

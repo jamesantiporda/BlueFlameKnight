@@ -94,38 +94,60 @@ public class PlayerAnimationTriggers : MonoBehaviour
     {
         if(other.gameObject.tag == "Attack")
         {
-
             WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
+            Vector3 attackDirection;
 
-            Vector3 attackDirection = transform.position - attack.enemy.transform.position;
-            attackDirection = new Vector3(attackDirection.x, 0.0f, attackDirection.z);
-            attackDirection.Normalize();
+            if (attack != null)
+            {
+                attackDirection = transform.position - attack.enemy.transform.position;
+                attackDirection = new Vector3(attackDirection.x, 0.0f, attackDirection.z);
+                attackDirection.Normalize();
 
-            _playerController.knockbackDirection = attackDirection;
+                _playerController.knockbackDirection = attackDirection;
 
-            ResetAnimationTriggers();
-            
-            if(attack.ReturnAttackType() == Enemy.Attack.Normal)
-            {
-                _animator.SetInteger("DamageType", 0);
-            }
-            else if(attack.ReturnAttackType() == Enemy.Attack.Knockback)
-            {
-                _animator.SetInteger("DamageType", 1);
-            }
-            else if(attack.ReturnAttackType() == Enemy.Attack.Launch)
-            {
-                _animator.SetInteger("DamageType", 2);
+                ResetAnimationTriggers();
+
+                if (attack.ReturnAttackType() == Enemy.Attack.Normal)
+                {
+                    _animator.SetInteger("DamageType", 0);
+                }
+                else if (attack.ReturnAttackType() == Enemy.Attack.Knockback)
+                {
+                    _animator.SetInteger("DamageType", 1);
+                }
+                else if (attack.ReturnAttackType() == Enemy.Attack.Launch)
+                {
+                    _animator.SetInteger("DamageType", 2);
+                }
+                else
+                {
+                    _animator.SetInteger("DamageType", 0);
+                }
             }
             else
             {
-                _animator.SetInteger("DamageType", 0);
+                attackDirection = transform.position - other.transform.position;
+                attackDirection = new Vector3(attackDirection.x, 0.0f, attackDirection.z);
+                attackDirection.Normalize();
+
+                _playerController.knockbackDirection = attackDirection;
+
+                ResetAnimationTriggers();
+
+                _animator.SetInteger("DamageType", 1);
             }
 
             _animator.SetTrigger("Hit");
 
             _animator.SetBool("isRolling", false);
             _playerController.Damage();
+        }
+        else if(other.gameObject.tag == "Grab")
+        {
+            WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
+
+            _animator.SetTrigger("Grabbed");
+            attack.enemy.animator.SetTrigger("Grab");
         }
     }
 
