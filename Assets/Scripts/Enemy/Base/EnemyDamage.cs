@@ -24,5 +24,18 @@ public class EnemyDamage : MonoBehaviour
             Debug.Log("hit!");
             enemy.Flinch();
         }
+
+        if (other.gameObject.tag == "Player")
+        {
+            //enemy.SetIsTouchingPlayer(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            //enemy.SetIsTouchingPlayer(false);
+        }
     }
 }

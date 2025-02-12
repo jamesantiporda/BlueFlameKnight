@@ -146,6 +146,27 @@ public class PlayerAnimationTriggers : MonoBehaviour
         {
             WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
 
+            _playerController.Damage();
+            ResetAnimationTriggers();
+
+            _playerController.MakeUnmoveable();
+            _playerController.LockInAnimation();
+
+            _playerController.MovePlayer(Vector3.zero, 0f);
+
+
+            // HARD CODE GRAB POSITION
+            _playerController.SnapTowardsTarget(attack.enemy.transform.position);
+
+            Vector3 new_pos = attack.enemy.transform.position + attack.enemy.transform.forward * 0.9f;
+
+            Vector3 new_player_pos = new Vector3(new_pos.x, _playerController.transform.position.y, new_pos.z);
+
+            //new_player_pos += -_playerController.transform.right;
+
+            _playerController.WarpToPosition(new_player_pos);
+            _playerController.ForceLockOnDisable();
+
             _animator.SetTrigger("Grabbed");
             attack.enemy.animator.SetTrigger("Grab");
         }

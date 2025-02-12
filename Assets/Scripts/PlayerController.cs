@@ -41,7 +41,7 @@ namespace itsSALT.FinalCharacterController
         public float sprintSpeed = 3f;
         public float movingThreshold = 0.01f;
         public float rollSpeed = 5f;
-        public float rollCooldown = 0.5f;
+        public float rollCooldown = 0.4f;
         public float attackMoveSpeed = 1f;
         public float knockbackSpeed = 1f;
 
@@ -354,6 +354,31 @@ namespace itsSALT.FinalCharacterController
             Debug.Log("STOP ROLLING");
             _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
         }
+        #endregion
+
+        #region Helpers
+
+        public void WarpToPosition(Vector3 pos)
+        {
+            _characterController.enabled = false;
+            transform.position = pos;
+            _characterController.enabled = true;
+        }
+
+        public void SnapTowardsTarget(Vector3 pos)
+        {
+            Vector3 lockDirectionProj = pos - transform.position;
+            lockDirectionProj = new Vector3(lockDirectionProj.x, 0.0f, lockDirectionProj.z);
+            lockDirectionProj.Normalize();
+
+            transform.rotation = Quaternion.LookRotation(lockDirectionProj, Vector3.up);
+        }
+
+        public void ForceLockOnDisable()
+        {
+            _playerLocomotionInput.ForceDisableLock();
+        }
+
         #endregion
     }
 }

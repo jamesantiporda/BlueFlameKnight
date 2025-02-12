@@ -110,5 +110,10 @@ namespace itsSALT.FinalCharacterController
             LockToggledOn = !LockToggledOn;
         }
         #endregion
+
+        public void ForceDisableLock()
+        {
+            LockToggledOn = false;
+        }
     }
 }

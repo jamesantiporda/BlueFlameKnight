@@ -23,6 +23,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public bool IsTurningClockwise { get; set; }
     public bool IsMovingWhileAttacking { get; set; }
 
+    private bool isTouchingPlayer = false;
+
     public enum Attack { Normal, Knockback, Launch }
 
     private Attack currentAttackType = Attack.Normal;
@@ -123,6 +125,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         velocity = new Vector3(velocity.x, 0f, velocity.z);
 
         transform.position += velocity * Time.deltaTime;
+
+        //RB.velocity = velocity;
     }
 
     public void RotateEnemy(Vector3 targetDirection, float speed)
@@ -249,6 +253,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         {
             currentAttackType = Attack.Normal;
         }
+    }
+
+    public void SetIsTouchingPlayer(bool val)
+    {
+        isTouchingPlayer = val;
     }
 
     public void ResetAttackType()
