@@ -68,6 +68,10 @@ public class EnemyAttackState : EnemyState
         {
             enemy.MoveEnemy(moveDirection * _movementSpeed/2 * enemy.SprintSpeed);
         }
+        else
+        {
+            enemy.MoveEnemy(Vector3.zero);
+        }
 
         // Backswing attack
         if(enemy.IsTurningClockwise)

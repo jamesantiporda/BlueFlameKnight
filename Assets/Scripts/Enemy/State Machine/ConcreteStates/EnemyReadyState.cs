@@ -58,6 +58,8 @@ public class EnemyReadyState : EnemyState
             if(retreat_random == 0)
             {
                 enemy.StateMachine.ChangeState(enemy.RetreatState);
+
+                return;
             }
         }
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckable
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public bool IsTurningClockwise { get; set; }
     public bool IsMovingWhileAttacking { get; set; }
 
+    public bool isActivated = false;
+
     private bool isTouchingPlayer = false;
 
     public enum Attack { Normal, Knockback, Launch }
@@ -38,6 +41,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public EnemyAttackState AttackState { get; set; }
     public EnemyRecoveryState RecoveryState { get; set; }
     public EnemyRetreatState RetreatState { get; set; }
+
+    public EnemyDeactivatedState DeactivatedState { get; set; }
 
     #endregion
 
@@ -72,6 +77,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         ReadyState = new EnemyReadyState(this, StateMachine);
         RecoveryState = new EnemyRecoveryState(this, StateMachine);
         RetreatState = new EnemyRetreatState(this, StateMachine);
+        DeactivatedState = new EnemyDeactivatedState(this, StateMachine);
     }
 
     private void Start()
@@ -82,7 +88,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
         animator = GetComponent<Animator>();
 
-        StateMachine.Initialize(IdleState);
+        StateMachine.Initialize(DeactivatedState);
 
         Debug.Log(transform.forward);
 
@@ -124,9 +130,13 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     {
         velocity = new Vector3(velocity.x, 0f, velocity.z);
 
-        transform.position += velocity * Time.deltaTime;
+        //Vector3 newPosition = Vector3.MoveTowards(transform.position, transform.position + velocity * 1000f, 7.5f * velocity.magnitude * Time.deltaTime);
 
-        //RB.velocity = velocity;
+        //RB.MovePosition(newPosition);
+
+        //transform.position += velocity * Time.deltaTime;
+
+        RB.velocity = velocity;
     }
 
     public void RotateEnemy(Vector3 targetDirection, float speed)

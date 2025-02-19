@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
 
 namespace itsSALT.FinalCharacterController
 {
@@ -17,6 +18,10 @@ namespace itsSALT.FinalCharacterController
         private Camera _playerCamera;
         [SerializeField]
         private GameObject _targetEnemy;
+        [SerializeField]
+        private Transform groundCheck;
+        [SerializeField]
+        private LayerMask groundMask;
 
         public float RotationMismatch { get; private set; } = 0f;
         public bool IsRotatingToTarget { get; private set; } = false;
@@ -44,6 +49,8 @@ namespace itsSALT.FinalCharacterController
         public float rollCooldown = 0.4f;
         public float attackMoveSpeed = 1f;
         public float knockbackSpeed = 1f;
+        public float gravity = 9.8f;
+        public float groundDistance = 0.01f;
 
         [Header("Animation")]
         public float playerModelRotationSpeed = 10f;
@@ -84,6 +91,7 @@ namespace itsSALT.FinalCharacterController
         {
             UpdateMovementState();
             HandleLateralMovement();
+            HandleVerticalMovement();
 
             if(IsMovingWhileAttacking)
             {
@@ -184,6 +192,15 @@ namespace itsSALT.FinalCharacterController
                 }
             }
         }
+
+        private void HandleVerticalMovement()
+        {
+            if(!IsGrounded())
+            {
+                transform.position -= Vector3.up * gravity * Time.deltaTime;
+                //Debug.Log("NOT GROUNDED");
+            }
+        }
         #endregion
 
         #region Late Update
@@ -269,7 +286,7 @@ namespace itsSALT.FinalCharacterController
 
         private bool IsGrounded()
         {
-            return _characterController.isGrounded;
+            return Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
         }
 
         public void StartAttacking()
