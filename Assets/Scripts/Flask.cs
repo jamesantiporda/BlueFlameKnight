@@ -11,6 +11,7 @@ public class Flask : MonoBehaviour
     public TMP_Text flasksText;
     public int maxFlasks = 10;
     public PlayerCombatInput _playerCombatInput;
+    public Health playerHealth;
     private int currentFlasks = 0;
 
     // Start is called before the first frame update
@@ -36,6 +37,8 @@ public class Flask : MonoBehaviour
         if(currentFlasks > 0)
         {
             currentFlasks--;
+
+            playerHealth.Heal(750);
 
             fill.value = currentFlasks;
             flasksText.text = "" + currentFlasks;

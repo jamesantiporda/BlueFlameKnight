@@ -49,8 +49,9 @@ namespace itsSALT.FinalCharacterController
 
             //Debug.Log("input: " + inputTarget);
 
-            if(_playerCombatInput.LightAttackInput && !_playerController.IsLockedInAnimation)
+            if(_playerCombatInput.LightAttackInput && !_playerController.IsLockedInAnimation && _playerController.ReturnStamina() > 0)
             {
+                _playerController.DecreaseStamina(250);
                 _animator.SetTrigger("LightAttack");
             }
 

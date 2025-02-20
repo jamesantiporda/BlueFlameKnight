@@ -23,6 +23,7 @@ namespace itsSALT.FinalCharacterController
         [SerializeField]
         private LayerMask groundMask;
         private Health _health;
+        private Stamina _stamina;
 
         public float RotationMismatch { get; private set; } = 0f;
         public bool IsRotatingToTarget { get; private set; } = false;
@@ -84,6 +85,7 @@ namespace itsSALT.FinalCharacterController
             _playerCombatInput = GetComponent<PlayerCombatInput>();
             _playerState = GetComponent<PlayerState>();
             _health = GetComponent<Health>();
+            _stamina = GetComponent<Stamina>();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -122,9 +124,9 @@ namespace itsSALT.FinalCharacterController
             {
                 bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;
                 bool isMovingLaterally = IsMovingLaterally();
-                bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally;
+                bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally && _stamina.currentStamina > 0;
                 bool isGrounded = IsGrounded();
-                bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput;
+                bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput && _stamina.currentStamina > 0;
                 bool isStrafing = _playerLocomotionInput.LockToggledOn && isMovingLaterally;
 
                 if(isRolling)
@@ -144,6 +146,12 @@ namespace itsSALT.FinalCharacterController
         {
             bool isSprinting = _playerState.CurrentPlayerMovementState == PlayerMovementState.Sprinting;
             bool isStrafing = _playerState.CurrentPlayerMovementState == PlayerMovementState.Strafing;
+
+            // Sprint Stamina calculation
+            if(isSprinting)
+            {
+                _stamina.DecreaseStamina(1);
+            }
 
             
             // State Dependent
@@ -367,6 +375,8 @@ namespace itsSALT.FinalCharacterController
         {
             Debug.Log("ROLLING");
 
+            _stamina.DecreaseStamina(200);
+
             rollDirection = new Vector2(_characterController.velocity.x, _characterController.velocity.z);
             rollDirection = rollDirection.normalized;
 
@@ -403,6 +413,16 @@ namespace itsSALT.FinalCharacterController
         public void TakeDamage(int damage)
         {
             _health.TakeDamage(damage);
+        }
+
+        public void DecreaseStamina(int val)
+        {
+            _stamina.DecreaseStamina(val);
+        }
+
+        public int ReturnStamina()
+        {
+            return _stamina.currentStamina;
         }
 
         #endregion

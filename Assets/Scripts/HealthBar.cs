@@ -38,6 +38,18 @@ public class HealthBar : MonoBehaviour
         yellowTimer = 0f;
     }
 
+    public void SetBothRedAndYellow(int val)
+    {
+        slider.value = val;
+        yellowBar.value = val;
+    }
+
+    public void AddToBothRedAndYellow(int val)
+    {
+        slider.value += val;
+        yellowBar.value += val;
+    }
+
     private void Update()
     {
         if(yellowBar.value > slider.value)
