@@ -90,12 +90,19 @@ public class PlayerAnimationTriggers : MonoBehaviour
         _playerController.MakeUnmoveable();
     }
 
+    public void TakeDamage(int damage)
+    {
+        _playerController.TakeDamage(damage);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Attack")
         {
             WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
             Vector3 attackDirection;
+
+            int damage = 500;
 
             if (attack != null)
             {
@@ -110,18 +117,26 @@ public class PlayerAnimationTriggers : MonoBehaviour
                 if (attack.ReturnAttackType() == Enemy.Attack.Normal)
                 {
                     _animator.SetInteger("DamageType", 0);
+
+                    damage = 250;
                 }
                 else if (attack.ReturnAttackType() == Enemy.Attack.Knockback)
                 {
                     _animator.SetInteger("DamageType", 1);
+
+                    damage = 750;
                 }
                 else if (attack.ReturnAttackType() == Enemy.Attack.Launch)
                 {
                     _animator.SetInteger("DamageType", 2);
+
+                    damage = 1000;
                 }
                 else
                 {
                     _animator.SetInteger("DamageType", 0);
+
+                    damage = 100;
                 }
             }
             else
@@ -138,6 +153,8 @@ public class PlayerAnimationTriggers : MonoBehaviour
             }
 
             _animator.SetTrigger("Hit");
+
+            TakeDamage(damage);
 
             _animator.SetBool("isRolling", false);
             _playerController.Damage();

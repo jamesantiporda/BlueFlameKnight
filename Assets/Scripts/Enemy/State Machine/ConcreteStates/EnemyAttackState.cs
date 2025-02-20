@@ -33,7 +33,12 @@ public class EnemyAttackState : EnemyState
         {
             int randomAttack = 0;
 
-            randomAttack = Random.Range(0, 6);
+            randomAttack = Random.Range(0, 7);
+
+            if(randomAttack == 6)
+            {
+                randomAttack = -2;
+            }
 
             enemy.SetAnimationInt("AttackNo", randomAttack);
         }

@@ -94,14 +94,7 @@ public class EnemyReadyState : EnemyState
                     enemy.SetAnimationTrigger("WalkLeft");
                     break;
                 case 2:
-                    if (Vector3.Distance(enemy.transform.position, _playerTransform.transform.position) < 1.0f)
-                    {
-                        enemy.SetAnimationTrigger("WalkBackward");
-                    }
-                    else
-                    {
-                        enemy.SetAnimationTrigger("WalkForward");
-                    }
+                    enemy.SetAnimationTrigger("WalkForward");
                     break;
                 case 3:
                     enemy.SetAnimationTrigger("WalkBackward");
@@ -129,14 +122,7 @@ public class EnemyReadyState : EnemyState
                 enemy.MoveEnemy(-enemy.transform.right * _speed);
                 break;
             case 2:
-                if (Vector3.Distance(enemy.transform.position, _playerTransform.transform.position) < 1.0f)
-                {
-                    enemy.MoveEnemy(-enemy.transform.forward * _speed);
-                }
-                else
-                {
-                    enemy.MoveEnemy(enemy.transform.forward * _speed);
-                }
+                enemy.MoveEnemy(enemy.transform.forward * _speed);
                 break;
             case 3:
                 enemy.MoveEnemy(-enemy.transform.forward * _speed);

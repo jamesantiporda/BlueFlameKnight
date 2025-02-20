@@ -22,6 +22,7 @@ namespace itsSALT.FinalCharacterController
         private Transform groundCheck;
         [SerializeField]
         private LayerMask groundMask;
+        private Health _health;
 
         public float RotationMismatch { get; private set; } = 0f;
         public bool IsRotatingToTarget { get; private set; } = false;
@@ -60,6 +61,7 @@ namespace itsSALT.FinalCharacterController
         public float lookSenseH = 0.1f;
         public float lookSenseV = 0.1f;
         public float lookLimitV = 70f;
+        public float lockSpeed = 5f;
 
         private PlayerLocomotionInput _playerLocomotionInput;
         private PlayerCombatInput _playerCombatInput;
@@ -81,6 +83,7 @@ namespace itsSALT.FinalCharacterController
             _playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
             _playerCombatInput = GetComponent<PlayerCombatInput>();
             _playerState = GetComponent<PlayerState>();
+            _health = GetComponent<Health>();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -261,7 +264,8 @@ namespace itsSALT.FinalCharacterController
                 Quaternion cameraFinalRotation = Quaternion.LookRotation(lockDirection);
 
                 _playerCamera.transform.rotation = cameraFinalRotation; //Quaternion.Lerp(_playerCamera.transform.rotation, cameraFinalRotation, playerModelRotationSpeed * Time.deltaTime);
-                
+
+                //_playerCamera.transform.rotation = Quaternion.Slerp(_playerCamera.transform.rotation, cameraFinalRotation, Time.deltaTime * lockSpeed);
             }
             else
             {
@@ -394,6 +398,11 @@ namespace itsSALT.FinalCharacterController
         public void ForceLockOnDisable()
         {
             _playerLocomotionInput.ForceDisableLock();
+        }
+
+        public void TakeDamage(int damage)
+        {
+            _health.TakeDamage(damage);
         }
 
         #endregion

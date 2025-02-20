@@ -12,6 +12,8 @@ namespace itsSALT.FinalCharacterController
 
         public bool LightAttackInput { get; private set; }
 
+        public bool FlaskInput { get; private set; }
+
         #region Startup
         private void OnEnable()
         {
@@ -32,6 +34,7 @@ namespace itsSALT.FinalCharacterController
         private void LateUpdate()
         {
             LightAttackInput = false;
+            FlaskInput = false;
         }
 
         public void OnLightAttack(InputAction.CallbackContext context)
@@ -39,6 +42,14 @@ namespace itsSALT.FinalCharacterController
             if(context.performed)
             {
                 LightAttackInput = true;
+            }
+        }
+
+        public void OnFlask(InputAction.CallbackContext context)
+        {
+            if(context.performed)
+            {
+                FlaskInput = true;
             }
         }
     }

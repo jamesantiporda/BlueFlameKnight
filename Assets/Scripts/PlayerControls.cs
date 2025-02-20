@@ -277,6 +277,15 @@ namespace itsSALT.FinalCharacterController
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Flask"",
+                    ""type"": ""Button"",
+                    ""id"": ""d69aa30c-b7fb-4897-b624-9e650aa123a4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -301,6 +310,28 @@ namespace itsSALT.FinalCharacterController
                     ""action"": ""LightAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""288e3f2e-7aae-44b3-affe-895dbeed5bd8"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Flask"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""af16ff97-49f6-413a-9f87-8df1d38c0b4a"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Flask"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -317,6 +348,7 @@ namespace itsSALT.FinalCharacterController
             // PlayerCombatMap
             m_PlayerCombatMap = asset.FindActionMap("PlayerCombatMap", throwIfNotFound: true);
             m_PlayerCombatMap_LightAttack = m_PlayerCombatMap.FindAction("LightAttack", throwIfNotFound: true);
+            m_PlayerCombatMap_Flask = m_PlayerCombatMap.FindAction("Flask", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -457,11 +489,13 @@ namespace itsSALT.FinalCharacterController
         private readonly InputActionMap m_PlayerCombatMap;
         private List<IPlayerCombatMapActions> m_PlayerCombatMapActionsCallbackInterfaces = new List<IPlayerCombatMapActions>();
         private readonly InputAction m_PlayerCombatMap_LightAttack;
+        private readonly InputAction m_PlayerCombatMap_Flask;
         public struct PlayerCombatMapActions
         {
             private @PlayerControls m_Wrapper;
             public PlayerCombatMapActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @LightAttack => m_Wrapper.m_PlayerCombatMap_LightAttack;
+            public InputAction @Flask => m_Wrapper.m_PlayerCombatMap_Flask;
             public InputActionMap Get() { return m_Wrapper.m_PlayerCombatMap; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -474,6 +508,9 @@ namespace itsSALT.FinalCharacterController
                 @LightAttack.started += instance.OnLightAttack;
                 @LightAttack.performed += instance.OnLightAttack;
                 @LightAttack.canceled += instance.OnLightAttack;
+                @Flask.started += instance.OnFlask;
+                @Flask.performed += instance.OnFlask;
+                @Flask.canceled += instance.OnFlask;
             }
 
             private void UnregisterCallbacks(IPlayerCombatMapActions instance)
@@ -481,6 +518,9 @@ namespace itsSALT.FinalCharacterController
                 @LightAttack.started -= instance.OnLightAttack;
                 @LightAttack.performed -= instance.OnLightAttack;
                 @LightAttack.canceled -= instance.OnLightAttack;
+                @Flask.started -= instance.OnFlask;
+                @Flask.performed -= instance.OnFlask;
+                @Flask.canceled -= instance.OnFlask;
             }
 
             public void RemoveCallbacks(IPlayerCombatMapActions instance)
@@ -509,6 +549,7 @@ namespace itsSALT.FinalCharacterController
         public interface IPlayerCombatMapActions
         {
             void OnLightAttack(InputAction.CallbackContext context);
+            void OnFlask(InputAction.CallbackContext context);
         }
     }
 }

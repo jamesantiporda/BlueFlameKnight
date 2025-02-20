@@ -32,6 +32,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     private Attack currentAttackType = Attack.Normal;
 
+    private Health _health;
+
     #region State Machine Variables
 
     public EnemyStateMachine StateMachine { get; set; }
@@ -87,6 +89,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         RB = GetComponent<Rigidbody>();
 
         animator = GetComponent<Animator>();
+
+        _health = GetComponent<Health>();
 
         StateMachine.Initialize(DeactivatedState);
 
@@ -175,6 +179,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void Flinch()
     {
         damageCounter++;
+
+        _health.TakeDamage(1000);
 
         animator.Play("Flinch", 1, 0);
     }
