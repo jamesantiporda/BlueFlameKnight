@@ -25,5 +25,6 @@ namespace itsSALT.FinalCharacterController
         Damaged = 6,
         Attacking = 7,
         Drinking = 8,
+        Dead = 9,
     }
 }

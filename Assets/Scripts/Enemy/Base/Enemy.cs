@@ -26,6 +26,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public bool isActivated = false;
 
+    public bool IsDead { get; set; }
+
     private bool isTouchingPlayer = false;
 
     public enum Attack { Normal, Knockback, Launch }
@@ -43,8 +45,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public EnemyAttackState AttackState { get; set; }
     public EnemyRecoveryState RecoveryState { get; set; }
     public EnemyRetreatState RetreatState { get; set; }
-
     public EnemyDeactivatedState DeactivatedState { get; set; }
+    public EnemyDieState DieState { get; set; }
 
     #endregion
 
@@ -80,6 +82,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         RecoveryState = new EnemyRecoveryState(this, StateMachine);
         RetreatState = new EnemyRetreatState(this, StateMachine);
         DeactivatedState = new EnemyDeactivatedState(this, StateMachine);
+        DieState = new EnemyDieState(this, StateMachine);
     }
 
     private void Start()
@@ -97,11 +100,19 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         Debug.Log(transform.forward);
 
         IsAggroed = false;
+
+        IsDead = false;
     }
 
     private void Update()
     {
         StateMachine.CurrentEnemyState.FrameUpdate();
+
+        if(_health.currentHealth <= 0f && !IsDead)
+        {
+            IsDead = true;
+            StateMachine.ChangeState(DieState);
+        }
     }
 
     private void FixedUpdate()

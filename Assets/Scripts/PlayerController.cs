@@ -40,6 +40,8 @@ namespace itsSALT.FinalCharacterController
 
         public bool IsKnockedBack { get; private set; } = false;
 
+        public bool IsDead { get; private set; } = false;
+
         [Header("Base Movement")]
         public float runAcceleration = 0.25f;
         public float runSpeed = 2f;
@@ -98,7 +100,14 @@ namespace itsSALT.FinalCharacterController
             HandleLateralMovement();
             HandleVerticalMovement();
 
-            if(IsMovingWhileAttacking)
+            if (_health.currentHealth <= 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Dead)
+            {
+                _playerState.SetPlayerMovementState(PlayerMovementState.Dead);
+                Die();
+                return;
+            }
+
+            if (IsMovingWhileAttacking)
             {
                 Vector3 attackDir = new Vector3(transform.forward.x, 0.0f, transform.forward.z);
 
@@ -120,7 +129,7 @@ namespace itsSALT.FinalCharacterController
 
         private void UpdateMovementState()
         {
-            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsAttacking && !IsLockedInAnimation)
+            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsAttacking && !IsLockedInAnimation && _playerState.CurrentPlayerMovementState != PlayerMovementState.Dead)
             {
                 bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;
                 bool isMovingLaterally = IsMovingLaterally();
@@ -149,64 +158,71 @@ namespace itsSALT.FinalCharacterController
             bool isSprinting = _playerState.CurrentPlayerMovementState == PlayerMovementState.Sprinting;
             bool isStrafing = _playerState.CurrentPlayerMovementState == PlayerMovementState.Strafing;
 
-            // Sprint Stamina calculation
-            if(isSprinting)
+            if(IsDead)
             {
-                _stamina.DecreaseStamina(1);
+                _characterController.Move(Vector3.zero);
             }
-
-            
-            // State Dependent
-            float lateralAcceleration = isSprinting ? sprintAcceleratiion : runAcceleration;
-            float clampLateralMagnitude = isSprinting ? sprintSpeed : runSpeed;
-
-            Vector3 cameraForwardXZ = new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
-            Vector3 cameraRightXZ = new Vector3(_playerCamera.transform.right.x, 0f, _playerCamera.transform.right.z).normalized;
-            Vector3 movementDirection = cameraRightXZ * _playerLocomotionInput.MovementInput.x + cameraForwardXZ * _playerLocomotionInput.MovementInput.y;
-
-            Vector3 movementDelta = movementDirection * lateralAcceleration * Time.deltaTime;
-            Vector3 newVelocity = _characterController.velocity + movementDelta;
-            newVelocity = new Vector3(newVelocity.x, 0.0f, newVelocity.z);
-
-            //Add Drag
-            Vector3 currentDrag = newVelocity.normalized * drag * Time.deltaTime;
-            newVelocity = (newVelocity.magnitude > drag * Time.deltaTime) ? newVelocity - currentDrag : Vector3.zero;
-            newVelocity = Vector3.ClampMagnitude(newVelocity, clampLateralMagnitude);
-
-            // Zero Y component of new velocity
-            newVelocity = new Vector3(newVelocity.x, 0.0f, newVelocity.z);
-
-            if(newVelocity != Vector3.zero)
+            else
             {
-                _playerTargetDirection = new Vector2(newVelocity.x, newVelocity.z);
-            }
-
-            // Slow down if drinking flask
-            if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking)
-            {
-                newVelocity = newVelocity * 0.5f;
-            }
-
-            //Debug.Log("Target Dir: " + _playerTargetDirection);
-
-            if(!IsAttacking && !IsLockedInAnimation)
-            {
-                if (_playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling)
+                // Sprint Stamina calculation
+                if (isSprinting)
                 {
-                    Vector3 rollDirection3D = new Vector3(rollDirection.x, 0.0f, rollDirection.y);
-                    rollDirection3D.Normalize();
-
-                    if(IsMovingRolling)
-                    {
-                        _characterController.Move(rollSpeed * rollDirection3D * Time.deltaTime);
-                    }
+                    _stamina.DecreaseStamina(1);
                 }
-                else
+
+
+                // State Dependent
+                float lateralAcceleration = isSprinting ? sprintAcceleratiion : runAcceleration;
+                float clampLateralMagnitude = isSprinting ? sprintSpeed : runSpeed;
+
+                Vector3 cameraForwardXZ = new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
+                Vector3 cameraRightXZ = new Vector3(_playerCamera.transform.right.x, 0f, _playerCamera.transform.right.z).normalized;
+                Vector3 movementDirection = cameraRightXZ * _playerLocomotionInput.MovementInput.x + cameraForwardXZ * _playerLocomotionInput.MovementInput.y;
+
+                Vector3 movementDelta = movementDirection * lateralAcceleration * Time.deltaTime;
+                Vector3 newVelocity = _characterController.velocity + movementDelta;
+                newVelocity = new Vector3(newVelocity.x, 0.0f, newVelocity.z);
+
+                //Add Drag
+                Vector3 currentDrag = newVelocity.normalized * drag * Time.deltaTime;
+                newVelocity = (newVelocity.magnitude > drag * Time.deltaTime) ? newVelocity - currentDrag : Vector3.zero;
+                newVelocity = Vector3.ClampMagnitude(newVelocity, clampLateralMagnitude);
+
+                // Zero Y component of new velocity
+                newVelocity = new Vector3(newVelocity.x, 0.0f, newVelocity.z);
+
+                if (newVelocity != Vector3.zero)
                 {
-                    // Move character (unity says only call this once per frame)
-                    if(IsMoveable)
+                    _playerTargetDirection = new Vector2(newVelocity.x, newVelocity.z);
+                }
+
+                // Slow down if drinking flask
+                if (_playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking)
+                {
+                    newVelocity = newVelocity * 0.5f;
+                }
+
+                //Debug.Log("Target Dir: " + _playerTargetDirection);
+
+                if (!IsAttacking && !IsLockedInAnimation)
+                {
+                    if (_playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling)
                     {
-                        _characterController.Move(newVelocity * _playerLocomotionInput.MovementInput.magnitude / 10 * Time.deltaTime);
+                        Vector3 rollDirection3D = new Vector3(rollDirection.x, 0.0f, rollDirection.y);
+                        rollDirection3D.Normalize();
+
+                        if (IsMovingRolling)
+                        {
+                            _characterController.Move(rollSpeed * rollDirection3D * Time.deltaTime);
+                        }
+                    }
+                    else
+                    {
+                        // Move character (unity says only call this once per frame)
+                        if (IsMoveable)
+                        {
+                            _characterController.Move(newVelocity * _playerLocomotionInput.MovementInput.magnitude / 10 * Time.deltaTime);
+                        }
                     }
                 }
             }
@@ -271,7 +287,7 @@ namespace itsSALT.FinalCharacterController
 
             }
 
-            if(_playerLocomotionInput.LockToggledOn)
+            if(_playerLocomotionInput.LockToggledOn && !IsDead)
             {
                 Vector3 lockDirection = _targetEnemy.transform.position - _playerCamera.transform.position;
 
@@ -313,23 +329,30 @@ namespace itsSALT.FinalCharacterController
         {
             _playerLocomotionInput.ForceDisableSprint();
             IsAttacking = true;
-            _playerState.CurrentPlayerMovementState = PlayerMovementState.Attacking;
+            _playerState.SetPlayerMovementState(PlayerMovementState.Attacking);
         }
 
         public void StopAttacking()
         {
             IsAttacking = false;
-            _playerState.CurrentPlayerMovementState = PlayerMovementState.Idling;
+
+            if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
+            {
+                _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+            }
         }
 
         public void StartDrinking()
         {
-            _playerState.CurrentPlayerMovementState = PlayerMovementState.Drinking;
+            _playerState.SetPlayerMovementState(PlayerMovementState.Drinking);
         }
 
         public void StopDrinking()
         {
-            _playerState.CurrentPlayerMovementState = PlayerMovementState.Idling;
+            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
+            {
+                _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+            }
         }
 
         public void StartMovingWhileAttacking()
@@ -371,7 +394,10 @@ namespace itsSALT.FinalCharacterController
         {
             IsLockedInAnimation = false;
 
-            _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+            if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
+            {
+                _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
+            }
         }
         
         public void MakeMoveable()
@@ -387,6 +413,19 @@ namespace itsSALT.FinalCharacterController
         public void Damage()
         {
             _playerState.SetPlayerMovementState(PlayerMovementState.Damaged);
+        }
+
+        public void Die()
+        {
+            IsDead = true;
+            IsMoveable = false;
+            IsLockedInAnimation = true;
+            IsMovingRolling = false;
+            IsKnockedBack = false;
+            IsMovingWhileAttacking = false;
+            IsAttacking = false;
+            _playerLocomotionInput.ForceDisableLock();
+            _playerState.SetPlayerMovementState(PlayerMovementState.Dead);
         }
         #endregion
 
@@ -404,6 +443,7 @@ namespace itsSALT.FinalCharacterController
             yield return new WaitForSeconds(rollCooldown);
 
             Debug.Log("STOP ROLLING");
+
             _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
         }
         #endregion

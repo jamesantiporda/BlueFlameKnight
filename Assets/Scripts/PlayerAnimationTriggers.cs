@@ -113,7 +113,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Attack")
+        if(other.gameObject.tag == "Attack" && !_playerController.IsDead)
         {
             WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
             Vector3 attackDirection;
@@ -161,6 +161,14 @@ public class PlayerAnimationTriggers : MonoBehaviour
                 attackDirection = new Vector3(attackDirection.x, 0.0f, attackDirection.z);
                 attackDirection.Normalize();
 
+                BFKRangedAttack bfkRangedAttack = other.gameObject.GetComponent<BFKRangedAttack>();
+
+                if(bfkRangedAttack != null)
+                {
+                    attackDirection = bfkRangedAttack.ReturnAttackDirection();
+                    attackDirection.Normalize();
+                }
+
                 _playerController.knockbackDirection = attackDirection;
 
                 ResetAnimationTriggers();
@@ -175,7 +183,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
             _animator.SetBool("isRolling", false);
             _playerController.Damage();
         }
-        else if(other.gameObject.tag == "Grab")
+        else if(other.gameObject.tag == "Grab" && !_playerController.IsDead)
         {
             WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
 

@@ -53,17 +53,6 @@
             ],
             "bindings": [
                 {
-                    "name": "",
-                    "id": "cba61cf0-093c-4397-b761-890c9c62886a",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Movement",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
                     "name": "WASD",
                     "id": "f77ee432-df61-499d-ae2c-f02299da3bb7",
                     "path": "2DVector",
@@ -189,7 +178,7 @@
                     "id": "6dca0b72-2611-49eb-9531-afd1cb5be809",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2(x=3,y=3)",
                     "groups": "",
                     "action": "StickLook",
                     "isComposite": false,

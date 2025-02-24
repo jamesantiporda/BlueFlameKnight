@@ -13,8 +13,9 @@ namespace itsSALT.FinalCharacterController
         private PlayerCombatInput _playerCombatInput;
         private PlayerState _playerState;
         private PlayerController _playerController;
+        private Health _health;
+        private bool isDead = false;
         
-
         private static int inputXHash = Animator.StringToHash("inputX");
         private static int inputYHash = Animator.StringToHash("inputY");
         private static int inputMagnitudeHash = Animator.StringToHash("inputMagnitude");
@@ -28,6 +29,7 @@ namespace itsSALT.FinalCharacterController
             _playerCombatInput = GetComponent<PlayerCombatInput>();
             _playerState = GetComponent<PlayerState>();
             _playerController = GetComponent<PlayerController>();
+            _health = GetComponent<Health>();
         }
 
         private void Update()
@@ -37,6 +39,12 @@ namespace itsSALT.FinalCharacterController
 
         private void UpdateAnimationState()
         {
+            if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Dead && !isDead)
+            {
+                _animator.SetTrigger("Die");
+                return;
+            }
+
             bool isIdling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Idling;
             bool isRunning = _playerState.CurrentPlayerMovementState == PlayerMovementState.Running;
             bool isSprinting = _playerState.CurrentPlayerMovementState == PlayerMovementState.Sprinting;
@@ -54,15 +62,15 @@ namespace itsSALT.FinalCharacterController
 
             if(_playerCombatInput.LightAttackInput && !_playerController.IsLockedInAnimation && _playerController.ReturnStamina() > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking)
             {
-                _playerState.CurrentPlayerMovementState = PlayerMovementState.Attacking;
+                _playerState.SetPlayerMovementState(PlayerMovementState.Attacking);
                 _playerController.DecreaseStamina(250);
                 _animator.SetTrigger("LightAttack");
             }
 
-            if(_playerCombatInput.FlaskInput && !_playerController.IsLockedInAnimation)
+            if(_playerCombatInput.FlaskInput && !_playerController.IsLockedInAnimation && _playerState.CurrentPlayerMovementState != PlayerMovementState.Attacking)
             {
                 _playerLocomotionInput.ForceDisableSprint();
-                _playerState.CurrentPlayerMovementState = PlayerMovementState.Drinking;
+                _playerState.SetPlayerMovementState(PlayerMovementState.Drinking);
                 _animator.SetTrigger("Drink");
             }
 
@@ -70,6 +78,12 @@ namespace itsSALT.FinalCharacterController
             _animator.SetFloat(inputXHash, _currentBlendInput.x);
             _animator.SetFloat(inputYHash, _currentBlendInput.y);
             _animator.SetFloat(inputMagnitudeHash, _currentBlendInput.magnitude);
+        }
+
+        public void Die()
+        {
+            _animator.SetTrigger("Die");
+            isDead = true;
         }
     }
 }

@@ -41,4 +41,9 @@ public class BFKRangedAttack : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public Vector3 ReturnAttackDirection()
+    {
+        return targetDirection;
+    }
 }
