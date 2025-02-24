@@ -1,3 +1,4 @@
+using itsSALT.FinalCharacterController;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -10,6 +11,7 @@ public class EnemyReadyState : EnemyState
     private float _decisionTimer;
     private Transform _playerTransform;
     private int _decision;
+    private PlayerController _playerController;
 
     private float _speed = 0.5f;
 
@@ -18,6 +20,7 @@ public class EnemyReadyState : EnemyState
     public EnemyReadyState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        _playerController = _playerTransform.GetComponent<PlayerController>();
     }
 
     public override void AnimationTriggerEvent(Enemy.AnimationTriggerType triggerType)
@@ -58,6 +61,22 @@ public class EnemyReadyState : EnemyState
             if(retreat_random == 0)
             {
                 enemy.StateMachine.ChangeState(enemy.RetreatState);
+
+                return;
+            }
+        }
+
+        // RANGE ATTACK DECISION
+
+        if(_playerController.ReturnIsDrinking())
+        {
+            int ranged_random = Random.Range(0, 4);
+
+            if (ranged_random == 0)
+            {
+                enemy.SetAnimationInt("AttackNo", -2);
+
+                enemy.StateMachine.ChangeState(enemy.AttackState);
 
                 return;
             }

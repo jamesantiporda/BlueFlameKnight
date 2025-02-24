@@ -14,6 +14,8 @@ public class LockOnPoint : MonoBehaviour
 
     public PlayerController playerController;
 
+    public Enemy enemy;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +25,7 @@ public class LockOnPoint : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(playerLocomotionInput.LockToggledOn && !playerController.IsDead)
+        if(playerLocomotionInput.LockToggledOn && !playerController.IsDead && !enemy.IsDead)
         {
             point.SetActive(true);
             transform.position = Camera.main.WorldToScreenPoint(target.transform.position);

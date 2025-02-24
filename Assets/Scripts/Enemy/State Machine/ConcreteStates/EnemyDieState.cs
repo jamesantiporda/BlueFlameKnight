@@ -34,5 +34,7 @@ public class EnemyDieState : EnemyState
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
+
+        enemy.MoveEnemy(Vector3.zero);
     }
 }

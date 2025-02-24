@@ -1,3 +1,4 @@
+using itsSALT.FinalCharacterController;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,11 +8,14 @@ public class EnemyChaseState : EnemyState
     private Transform _playerTransform;
     private float _movementSpeed = 1.75f;
 
+    private PlayerController _playerController;
+
     private float _outOfRangeTimer = 0.0f;
 
     public EnemyChaseState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        _playerController = _playerTransform.GetComponent<PlayerController>();
     }
 
     public override void AnimationTriggerEvent(Enemy.AnimationTriggerType triggerType)
@@ -70,7 +74,7 @@ public class EnemyChaseState : EnemyState
         {
             _outOfRangeTimer += Time.deltaTime;
 
-            if(_outOfRangeTimer > 2.5f)
+            if(_outOfRangeTimer > 2.5f || _playerController.ReturnIsDrinking())
             {
                 int range_attack_random = Random.Range(0, 3);
 

@@ -336,7 +336,7 @@ namespace itsSALT.FinalCharacterController
         {
             IsAttacking = false;
 
-            if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
+            if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged)
             {
                 _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
             }
@@ -349,7 +349,7 @@ namespace itsSALT.FinalCharacterController
 
         public void StopDrinking()
         {
-            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
+            if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged)
             {
                 _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
             }
@@ -394,7 +394,7 @@ namespace itsSALT.FinalCharacterController
         {
             IsLockedInAnimation = false;
 
-            if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
+            if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged)
             {
                 _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
             }
@@ -412,6 +412,12 @@ namespace itsSALT.FinalCharacterController
 
         public void Damage()
         {
+            IsLockedInAnimation = true;
+            IsMovingRolling = false;
+            IsKnockedBack = false;
+            IsMovingWhileAttacking = false;
+            IsAttacking = false;
+
             _playerState.SetPlayerMovementState(PlayerMovementState.Damaged);
         }
 
@@ -484,6 +490,13 @@ namespace itsSALT.FinalCharacterController
         public int ReturnStamina()
         {
             return _stamina.currentStamina;
+        }
+
+        public bool ReturnIsDrinking()
+        {
+            bool isDrinking = _playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking;
+
+            return isDrinking;
         }
 
         #endregion

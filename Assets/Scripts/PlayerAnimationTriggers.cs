@@ -111,6 +111,11 @@ public class PlayerAnimationTriggers : MonoBehaviour
         _playerController.TakeDamage(damage);
     }
 
+    public void ShowDeathMessage()
+    {
+        GameEventManager.Instance.PlayerDied();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "Attack" && !_playerController.IsDead)

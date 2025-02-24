@@ -307,6 +307,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         Instantiate(rangedAttackObject, rangedAttackEmissionPoint.position, Quaternion.identity);
     }
 
+    public void ConfirmDeath()
+    {
+        GameEventManager.Instance.PlayerWon();
+    }
+
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)
     {
         StateMachine.CurrentEnemyState.AnimationTriggerEvent(triggerType);
