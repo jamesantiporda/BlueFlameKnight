@@ -124,17 +124,19 @@ namespace itsSALT.FinalCharacterController
             {
                 bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;
                 bool isMovingLaterally = IsMovingLaterally();
-                bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally && _stamina.currentStamina > 0;
+                bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally && _stamina.currentStamina > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking;
                 bool isGrounded = IsGrounded();
-                bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput && _stamina.currentStamina > 0;
+                bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput && _stamina.currentStamina > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking;
                 bool isStrafing = _playerLocomotionInput.LockToggledOn && isMovingLaterally;
+                bool isDrinking = _playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking;
 
                 if(isRolling)
                 {
                     StartCoroutine(Roll());
                 }
 
-                PlayerMovementState lateralState = isRolling ? PlayerMovementState.Rolling :
+                PlayerMovementState lateralState = isDrinking ? PlayerMovementState.Drinking :
+                                                    isRolling ? PlayerMovementState.Rolling :
                                                     isSprinting ? PlayerMovementState.Sprinting :
                                                     isStrafing ? PlayerMovementState.Strafing :
                                                     isMovingLaterally || isMovementInput ? PlayerMovementState.Running : PlayerMovementState.Idling;
@@ -177,6 +179,12 @@ namespace itsSALT.FinalCharacterController
             if(newVelocity != Vector3.zero)
             {
                 _playerTargetDirection = new Vector2(newVelocity.x, newVelocity.z);
+            }
+
+            // Slow down if drinking flask
+            if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking)
+            {
+                newVelocity = newVelocity * 0.5f;
             }
 
             //Debug.Log("Target Dir: " + _playerTargetDirection);
@@ -303,12 +311,25 @@ namespace itsSALT.FinalCharacterController
 
         public void StartAttacking()
         {
+            _playerLocomotionInput.ForceDisableSprint();
             IsAttacking = true;
+            _playerState.CurrentPlayerMovementState = PlayerMovementState.Attacking;
         }
 
         public void StopAttacking()
         {
             IsAttacking = false;
+            _playerState.CurrentPlayerMovementState = PlayerMovementState.Idling;
+        }
+
+        public void StartDrinking()
+        {
+            _playerState.CurrentPlayerMovementState = PlayerMovementState.Drinking;
+        }
+
+        public void StopDrinking()
+        {
+            _playerState.CurrentPlayerMovementState = PlayerMovementState.Idling;
         }
 
         public void StartMovingWhileAttacking()

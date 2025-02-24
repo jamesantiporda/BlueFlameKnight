@@ -115,5 +115,10 @@ namespace itsSALT.FinalCharacterController
         {
             LockToggledOn = false;
         }
+
+        public void ForceDisableSprint()
+        {
+            SprintInput = false;
+        }
     }
 }

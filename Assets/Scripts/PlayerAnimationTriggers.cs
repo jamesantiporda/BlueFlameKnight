@@ -8,6 +8,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
 {
     public PlayerController _playerController;
     private Animator _animator;
+    [SerializeField] private Flask flask;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,11 @@ public class PlayerAnimationTriggers : MonoBehaviour
         
     }
 
+    public void UseUpFlask()
+    {
+        flask.UseFlask();
+    }
+
     public void StartAttack()
     {
         _animator.SetBool("isAttacking", true);
@@ -31,6 +37,16 @@ public class PlayerAnimationTriggers : MonoBehaviour
     {
         _animator.SetBool("isAttacking", false);
         _playerController.StopAttacking();
+    }
+
+    public void StartDrinking()
+    {
+        _playerController.StartDrinking();
+    }
+
+    public void StopDrinking()
+    {
+        _playerController.StopDrinking();
     }
 
     public void StartMovingAttacking()

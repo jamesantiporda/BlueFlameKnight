@@ -13,6 +13,7 @@ namespace itsSALT.FinalCharacterController
         private PlayerCombatInput _playerCombatInput;
         private PlayerState _playerState;
         private PlayerController _playerController;
+        
 
         private static int inputXHash = Animator.StringToHash("inputX");
         private static int inputYHash = Animator.StringToHash("inputY");
@@ -42,17 +43,27 @@ namespace itsSALT.FinalCharacterController
             bool isRolling = _playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling;
 
             Vector2 inputTarget = isSprinting ? _playerLocomotionInput.MovementInput * 1.5f :
-                                  isRunning ? _playerLocomotionInput.MovementInput * 1f : _playerLocomotionInput.MovementInput * 0.5f;
+                                  isRunning ? _playerLocomotionInput.MovementInput * 1f :
+                                  _playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking ? _playerLocomotionInput.MovementInput * 0.35f :
+                                  _playerLocomotionInput.MovementInput * 0.5f;
             inputTarget = new Vector2(inputTarget.x/10, inputTarget.y/10);
 
             _currentBlendInput = Vector3.Lerp(_currentBlendInput, inputTarget, locomotionBlendSpeed * Time.deltaTime);
 
             //Debug.Log("input: " + inputTarget);
 
-            if(_playerCombatInput.LightAttackInput && !_playerController.IsLockedInAnimation && _playerController.ReturnStamina() > 0)
+            if(_playerCombatInput.LightAttackInput && !_playerController.IsLockedInAnimation && _playerController.ReturnStamina() > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking)
             {
+                _playerState.CurrentPlayerMovementState = PlayerMovementState.Attacking;
                 _playerController.DecreaseStamina(250);
                 _animator.SetTrigger("LightAttack");
+            }
+
+            if(_playerCombatInput.FlaskInput && !_playerController.IsLockedInAnimation)
+            {
+                _playerLocomotionInput.ForceDisableSprint();
+                _playerState.CurrentPlayerMovementState = PlayerMovementState.Drinking;
+                _animator.SetTrigger("Drink");
             }
 
             _animator.SetBool(isRollingHash, isRolling);

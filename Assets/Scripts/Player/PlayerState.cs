@@ -23,5 +23,7 @@ namespace itsSALT.FinalCharacterController
         Rolling = 4,
         Strafing = 5,
         Damaged = 6,
+        Attacking = 7,
+        Drinking = 8,
     }
 }

@@ -26,10 +26,10 @@ public class Flask : MonoBehaviour
 
     private void Update()
     {
-        if(_playerCombatInput.FlaskInput)
-        {
-            UseFlask();
-        }
+        //if(_playerCombatInput.FlaskInput)
+        //{
+        //    UseFlask();
+        //}
     }
 
     public void UseFlask()
