@@ -14,6 +14,8 @@ public class Flask : MonoBehaviour
     public Health playerHealth;
     private int currentFlasks = 0;
 
+    [SerializeField] private AudioClip flaskUse;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +41,8 @@ public class Flask : MonoBehaviour
             currentFlasks--;
 
             playerHealth.Heal(750);
+
+            SoundFXManager.instance.PlaySoundFXClip2D(flaskUse, _playerCombatInput.transform, 0.5f);
 
             fill.value = currentFlasks;
             flasksText.text = "" + currentFlasks;

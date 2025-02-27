@@ -88,8 +88,6 @@ namespace itsSALT.FinalCharacterController
             _playerState = GetComponent<PlayerState>();
             _health = GetComponent<Health>();
             _stamina = GetComponent<Stamina>();
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
         }
         #endregion
 
@@ -431,6 +429,7 @@ namespace itsSALT.FinalCharacterController
             IsMovingWhileAttacking = false;
             IsAttacking = false;
             _playerLocomotionInput.ForceDisableLock();
+            MovePlayer(Vector3.zero, 0);
             _playerState.SetPlayerMovementState(PlayerMovementState.Dead);
         }
         #endregion
@@ -499,6 +498,10 @@ namespace itsSALT.FinalCharacterController
             return isDrinking;
         }
 
+        public bool IsMoving()
+        {
+            return _characterController.velocity != Vector3.zero;
+        }
         #endregion
     }
 }

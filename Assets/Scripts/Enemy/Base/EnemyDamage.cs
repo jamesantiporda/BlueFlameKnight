@@ -27,6 +27,7 @@ public class EnemyDamage : MonoBehaviour
 
         if (other.gameObject.tag == "Player")
         {
+            //Debug.Log("AAAAAAAAAAAAAAAAA");
             //enemy.SetIsTouchingPlayer(true);
         }
     }

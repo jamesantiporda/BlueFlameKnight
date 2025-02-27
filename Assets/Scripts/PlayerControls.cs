@@ -73,6 +73,15 @@ namespace itsSALT.FinalCharacterController
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Settings"",
+                    ""type"": ""Button"",
+                    ""id"": ""e5636195-41ee-448c-83d1-fe77ad5c9340"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -251,6 +260,28 @@ namespace itsSALT.FinalCharacterController
                     ""action"": ""ToggleLock"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""89c45890-2052-4265-8f12-778d422e17a2"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Settings"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4db40cec-0db6-4faa-a311-48879fde96e7"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Settings"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -334,6 +365,7 @@ namespace itsSALT.FinalCharacterController
             m_PlayerLocomotionMap_StickLook = m_PlayerLocomotionMap.FindAction("StickLook", throwIfNotFound: true);
             m_PlayerLocomotionMap_Sprint = m_PlayerLocomotionMap.FindAction("Sprint", throwIfNotFound: true);
             m_PlayerLocomotionMap_ToggleLock = m_PlayerLocomotionMap.FindAction("ToggleLock", throwIfNotFound: true);
+            m_PlayerLocomotionMap_Settings = m_PlayerLocomotionMap.FindAction("Settings", throwIfNotFound: true);
             // PlayerCombatMap
             m_PlayerCombatMap = asset.FindActionMap("PlayerCombatMap", throwIfNotFound: true);
             m_PlayerCombatMap_LightAttack = m_PlayerCombatMap.FindAction("LightAttack", throwIfNotFound: true);
@@ -404,6 +436,7 @@ namespace itsSALT.FinalCharacterController
         private readonly InputAction m_PlayerLocomotionMap_StickLook;
         private readonly InputAction m_PlayerLocomotionMap_Sprint;
         private readonly InputAction m_PlayerLocomotionMap_ToggleLock;
+        private readonly InputAction m_PlayerLocomotionMap_Settings;
         public struct PlayerLocomotionMapActions
         {
             private @PlayerControls m_Wrapper;
@@ -413,6 +446,7 @@ namespace itsSALT.FinalCharacterController
             public InputAction @StickLook => m_Wrapper.m_PlayerLocomotionMap_StickLook;
             public InputAction @Sprint => m_Wrapper.m_PlayerLocomotionMap_Sprint;
             public InputAction @ToggleLock => m_Wrapper.m_PlayerLocomotionMap_ToggleLock;
+            public InputAction @Settings => m_Wrapper.m_PlayerLocomotionMap_Settings;
             public InputActionMap Get() { return m_Wrapper.m_PlayerLocomotionMap; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -437,6 +471,9 @@ namespace itsSALT.FinalCharacterController
                 @ToggleLock.started += instance.OnToggleLock;
                 @ToggleLock.performed += instance.OnToggleLock;
                 @ToggleLock.canceled += instance.OnToggleLock;
+                @Settings.started += instance.OnSettings;
+                @Settings.performed += instance.OnSettings;
+                @Settings.canceled += instance.OnSettings;
             }
 
             private void UnregisterCallbacks(IPlayerLocomotionMapActions instance)
@@ -456,6 +493,9 @@ namespace itsSALT.FinalCharacterController
                 @ToggleLock.started -= instance.OnToggleLock;
                 @ToggleLock.performed -= instance.OnToggleLock;
                 @ToggleLock.canceled -= instance.OnToggleLock;
+                @Settings.started -= instance.OnSettings;
+                @Settings.performed -= instance.OnSettings;
+                @Settings.canceled -= instance.OnSettings;
             }
 
             public void RemoveCallbacks(IPlayerLocomotionMapActions instance)
@@ -534,6 +574,7 @@ namespace itsSALT.FinalCharacterController
             void OnStickLook(InputAction.CallbackContext context);
             void OnSprint(InputAction.CallbackContext context);
             void OnToggleLock(InputAction.CallbackContext context);
+            void OnSettings(InputAction.CallbackContext context);
         }
         public interface IPlayerCombatMapActions
         {

@@ -18,6 +18,8 @@ namespace itsSALT.FinalCharacterController
 
         public bool LockToggledOn { get; private set; }
 
+        public bool SettingsInput { get; private set; }
+
         private float sprintButtonTimer = 0.0f;
         private bool sprintButtonHeld = false;
         private float sprintDelay = 0.5f;
@@ -61,6 +63,7 @@ namespace itsSALT.FinalCharacterController
         private void LateUpdate()
         {
             RollInput = false;
+            SettingsInput = false;
         }
         #endregion
 
@@ -108,6 +111,14 @@ namespace itsSALT.FinalCharacterController
                 return;
 
             LockToggledOn = !LockToggledOn;
+        }
+
+        public void OnSettings(InputAction.CallbackContext context)
+        {
+            if (!context.performed)
+                return;
+
+            SettingsInput = !SettingsInput;
         }
         #endregion
 

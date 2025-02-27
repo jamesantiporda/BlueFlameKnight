@@ -13,7 +13,7 @@ public class EnemyReadyState : EnemyState
     private int _decision;
     private PlayerController _playerController;
 
-    private float _speed = 0.5f;
+    private float _speed = 0.75f;
 
     private int _decisionCount;
 
@@ -135,16 +135,16 @@ public class EnemyReadyState : EnemyState
         switch(_decision)
         {
             case 0:
-                enemy.MoveEnemy(enemy.transform.right * _speed);
+                enemy.MoveEnemy(enemy.transform.right * _speed * enemy.SprintSpeed);
                 break;
             case 1:
-                enemy.MoveEnemy(-enemy.transform.right * _speed);
+                enemy.MoveEnemy(-enemy.transform.right * _speed * enemy.SprintSpeed);
                 break;
             case 2:
-                enemy.MoveEnemy(enemy.transform.forward * _speed);
+                enemy.MoveEnemy(enemy.transform.forward * _speed * enemy.SprintSpeed);
                 break;
             case 3:
-                enemy.MoveEnemy(-enemy.transform.forward * _speed);
+                enemy.MoveEnemy(-enemy.transform.forward * _speed * enemy.SprintSpeed);
                 break;
             default:
                 break;

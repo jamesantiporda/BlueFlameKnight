@@ -71,6 +71,12 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     #endregion
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip damagedSFX;
+    [SerializeField] private AudioClip[] footstepsSFX;
+    [SerializeField] private AudioClip[] bladeSwingSFX;
+    [SerializeField] private AudioClip[] bladeSlamSFX;
+
     private void Awake()
     {
         StateMachine = new EnemyStateMachine();
@@ -126,7 +132,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     {
         CurrentHealth -= damageAmount;
 
-        if(CurrentHealth <= 0f )
+        if (CurrentHealth <= 0f )
         {
             Die();
         }
@@ -150,6 +156,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         //RB.MovePosition(newPosition);
 
         //transform.position += velocity * Time.deltaTime;
+
+        //Debug.Log("MOVE");
 
         RB.velocity = velocity;
     }
@@ -190,6 +198,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void Flinch()
     {
         damageCounter++;
+
+        SoundFXManager.instance.PlaySoundFXClip(damagedSFX, transform, 0.5f);
 
         _health.TakeDamage(1000);
 
@@ -322,5 +332,24 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         EnemyDamaged,
         PlayFootstepSound
     }
+    #endregion
+
+    #region SFX methods
+
+    public void PlayFootstep()
+    {
+        SoundFXManager.instance.PlayRandomSoundFXClip(footstepsSFX, transform, 1.0f);
+    }
+
+    public void PlayWeaponSwing()
+    {
+        SoundFXManager.instance.PlayRandomSoundFXClip(bladeSwingSFX, transform, 0.5f);
+    }
+
+    public void PlayWeaponSlam()
+    {
+        SoundFXManager.instance.PlayRandomSoundFXClip(bladeSlamSFX, transform, 0.5f);
+    }
+
     #endregion
 }

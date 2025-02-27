@@ -10,6 +10,11 @@ public class PlayerAnimationTriggers : MonoBehaviour
     private Animator _animator;
     [SerializeField] private Flask flask;
 
+    [SerializeField] private AudioClip[] footstepClips;
+    [SerializeField] private AudioClip rollSFX;
+    [SerializeField] private AudioClip[] slashClips;
+    [SerializeField] private AudioClip playerDamagedSFX;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -227,5 +232,28 @@ public class PlayerAnimationTriggers : MonoBehaviour
                 _animator.ResetTrigger(param.name);
             }
         }
+    }
+
+    public void PlayFootstep()
+    {
+        if(_playerController.IsMoving())
+        {
+            SoundFXManager.instance.PlayRandomSoundFXClip(footstepClips, transform, 0.5f);
+        }
+    }
+
+    public void PlayRollSFX()
+    {
+        SoundFXManager.instance.PlaySoundFXClip2D(rollSFX, transform, 0.5f);
+    }
+
+    public void PlaySlashSFX()
+    {
+        SoundFXManager.instance.PlayRandomSoundFXClip(slashClips, transform, 0.5f);
+    }
+
+    public void PlayDamageSound()
+    {
+        SoundFXManager.instance.PlaySoundFXClip(playerDamagedSFX, transform, 0.5f);
     }
 }
