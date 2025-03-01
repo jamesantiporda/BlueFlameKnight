@@ -8,6 +8,7 @@ public class MessageUI : MonoBehaviour
 {
     public GameObject winText;
     public GameObject gameOverText;
+    public MusicManager musicManager;
 
     private void Start()
     {
@@ -26,11 +27,20 @@ public class MessageUI : MonoBehaviour
     private void ShowWin()
     {
         winText.SetActive(true);
+
+        UIManager.instance.HideBossHP();
+
+        DisableMusic();
     }
 
     private void OnDestroy()
     {
         GameEventManager.Instance.OnPlayerDeath -= ShowGameOver;
         GameEventManager.Instance.OnPlayerWin -= ShowWin;
+    }
+
+    public void DisableMusic()
+    {
+        musicManager.FadeOut();
     }
 }

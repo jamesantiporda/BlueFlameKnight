@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EnemyRetreatState : EnemyState
 {
-    private float _speed = 5.0f;
-
     public EnemyRetreatState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
     }
@@ -18,12 +16,6 @@ public class EnemyRetreatState : EnemyState
     public override void EnterState()
     {
         base.EnterState();
-
-        enemy.ResetAnimationTriggers();
-
-        enemy.damageCounter = 0;
-
-        enemy.animator.SetTrigger("Retreat");
     }
 
     public override void ExitState()
@@ -34,8 +26,6 @@ public class EnemyRetreatState : EnemyState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
-
-        enemy.MoveEnemy(-enemy.transform.forward * _speed);
     }
 
     public override void PhysicsUpdate()

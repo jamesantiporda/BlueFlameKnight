@@ -28,13 +28,13 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public bool IsDead { get; set; }
 
-    private bool isTouchingPlayer = false;
+    protected bool isTouchingPlayer = false;
 
     public enum Attack { Normal, Knockback, Launch }
 
-    private Attack currentAttackType = Attack.Normal;
+    protected Attack currentAttackType = Attack.Normal;
 
-    private Health _health;
+    protected Health _health;
 
     #region State Machine Variables
 
@@ -68,6 +68,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public int damageCounter = 0;
     public int damageThreshold = 5;
+
+    protected Vector3 grabPosition = Vector3.zero;
 
     #endregion
 
@@ -113,6 +115,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     private void Update()
     {
         StateMachine.CurrentEnemyState.FrameUpdate();
+
+        SetGrabPosition();
 
         if(_health.currentHealth <= 0f && !IsDead)
         {
@@ -189,6 +193,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void SetWithinStrikingDistance(bool isWithinStrikingDistance)
     {
         IsWithinStrikingDistance = isWithinStrikingDistance;
+    }
+
+    protected virtual void SetGrabPosition()
+    {
+
     }
 
     #endregion
@@ -322,6 +331,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         GameEventManager.Instance.PlayerWon();
     }
 
+    public Vector3 ReturnGrabPosition()
+    {
+        return grabPosition;
+    }
+
     private void AnimationTriggerEvent(AnimationTriggerType triggerType)
     {
         StateMachine.CurrentEnemyState.AnimationTriggerEvent(triggerType);
@@ -338,7 +352,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public void PlayFootstep()
     {
-        SoundFXManager.instance.PlayRandomSoundFXClip(footstepsSFX, transform, 1.0f);
+        SoundFXManager.instance.PlayRandomSoundFXClip(footstepsSFX, transform, 0.1f);
     }
 
     public void PlayWeaponSwing()
@@ -348,7 +362,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public void PlayWeaponSlam()
     {
-        SoundFXManager.instance.PlayRandomSoundFXClip(bladeSlamSFX, transform, 0.5f);
+        SoundFXManager.instance.PlayRandomSoundFXClip(bladeSlamSFX, transform, 0.75f);
     }
 
     #endregion

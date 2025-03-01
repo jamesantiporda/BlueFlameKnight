@@ -20,7 +20,7 @@ public class BFKRangedAttack : MonoBehaviour
 
         target = targets[0];
 
-        targetDirection = (target.transform.position + Vector3.up * 0.25f) - transform.position;
+        targetDirection = (target.transform.position + Vector3.up * 0.5f) - transform.position;
 
         targetDirection = targetDirection.normalized;
 

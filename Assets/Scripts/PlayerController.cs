@@ -295,6 +295,10 @@ namespace itsSALT.FinalCharacterController
 
                 _playerCamera.transform.rotation = cameraFinalRotation; //Quaternion.Lerp(_playerCamera.transform.rotation, cameraFinalRotation, playerModelRotationSpeed * Time.deltaTime);
 
+                Vector3 euler = _playerCamera.transform.rotation.eulerAngles;
+
+                _cameraRotation = new Vector2(euler.y, euler.x);
+
                 //_playerCamera.transform.rotation = Quaternion.Slerp(_playerCamera.transform.rotation, cameraFinalRotation, Time.deltaTime * lockSpeed);
             }
             else

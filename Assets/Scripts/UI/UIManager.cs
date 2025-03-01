@@ -5,13 +5,22 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager instance;
+
     public PlayerLocomotionInput _playerLocomotionInput;
 
     public GameObject settingsPanel;
 
+    public GameObject enemyHP;
+
     // Start is called before the first frame update
     void Start()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+
         settingsPanel.SetActive(false);
 
         Cursor.visible = false;
@@ -37,5 +46,10 @@ public class UIManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
         
+    }
+
+    public void HideBossHP()
+    {
+        enemyHP.SetActive(false);
     }
 }

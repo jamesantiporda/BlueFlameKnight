@@ -23,6 +23,8 @@ namespace itsSALT.FinalCharacterController
         private float sprintButtonTimer = 0.0f;
         private bool sprintButtonHeld = false;
         private float sprintDelay = 0.5f;
+
+        public Enemy enemy;
         #endregion
 
         #region Startup
@@ -110,7 +112,10 @@ namespace itsSALT.FinalCharacterController
             if (!context.performed)
                 return;
 
-            LockToggledOn = !LockToggledOn;
+            if(!enemy.IsDead)
+            {
+                LockToggledOn = !LockToggledOn;
+            }
         }
 
         public void OnSettings(InputAction.CallbackContext context)

@@ -205,11 +205,10 @@ public class PlayerAnimationTriggers : MonoBehaviour
 
             _playerController.MovePlayer(Vector3.zero, 0f);
 
-
-            // HARD CODE GRAB POSITION
+            // SET PLAYER POSITION
             _playerController.SnapTowardsTarget(attack.enemy.transform.position);
 
-            Vector3 new_pos = attack.enemy.transform.position + attack.enemy.transform.forward * 0.9f;
+            Vector3 new_pos = attack.enemy.ReturnGrabPosition();
 
             Vector3 new_player_pos = new Vector3(new_pos.x, _playerController.transform.position.y, new_pos.z);
 
@@ -255,5 +254,10 @@ public class PlayerAnimationTriggers : MonoBehaviour
     public void PlayDamageSound()
     {
         SoundFXManager.instance.PlaySoundFXClip(playerDamagedSFX, transform, 0.5f);
+    }
+
+    public void DecreaseStamina(int val)
+    {
+        _playerController.DecreaseStamina(val);
     }
 }

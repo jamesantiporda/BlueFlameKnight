@@ -1,3 +1,4 @@
+using itsSALT.FinalCharacterController;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ public class GameEventManager : MonoBehaviour
 
     public event Action OnPlayerDeath;
     public event Action OnPlayerWin;
+
+    public PlayerLocomotionInput playerLocomotionInput;
 
     private void Awake()
     {
@@ -30,5 +33,7 @@ public class GameEventManager : MonoBehaviour
     public void PlayerWon()
     {
         OnPlayerWin?.Invoke();
+
+        playerLocomotionInput.ForceDisableLock();
     }
 }
