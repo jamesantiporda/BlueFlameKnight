@@ -24,6 +24,8 @@ namespace itsSALT.FinalCharacterController
         private LayerMask groundMask;
         private Health _health;
         private Stamina _stamina;
+        [SerializeField]
+        private Animator _animator;
 
         public float RotationMismatch { get; private set; } = 0f;
         public bool IsRotatingToTarget { get; private set; } = false;
@@ -445,6 +447,7 @@ namespace itsSALT.FinalCharacterController
             IsAttacking = false;
             _playerLocomotionInput.ForceDisableLock();
             MovePlayer(Vector3.zero, 0);
+            _animator.SetBool("isDead", true);
             _playerState.SetPlayerMovementState(PlayerMovementState.Dead);
         }
         #endregion

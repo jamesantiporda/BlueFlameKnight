@@ -117,6 +117,11 @@ public class PlayerAnimationTriggers : MonoBehaviour
         _playerController.TakeDamage(damage);
     }
 
+    public void StopGrab()
+    {
+        _animator.SetBool("isGrabbed", false);
+    }
+
     public void ShowDeathMessage()
     {
         GameEventManager.Instance.PlayerDied();
@@ -129,7 +134,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
             WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
             Vector3 attackDirection;
 
-            int damage = 250;
+            int damage = 500;
 
             if (attack != null)
             {
@@ -213,6 +218,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
             _playerController.ForceLockOnDisable();
 
             _animator.SetTrigger("Grabbed");
+            _animator.SetBool("isGrabbed", true);
             attack.enemy.animator.SetTrigger("Grab");
         }
     }
