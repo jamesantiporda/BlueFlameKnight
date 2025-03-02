@@ -28,6 +28,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public bool IsDead { get; set; }
 
+    public int CurrentAttackDamage { get; private set; } = 0;
+
     protected bool isTouchingPlayer = false;
 
     public enum Attack { Normal, Knockback, Launch }
@@ -138,7 +140,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         StateMachine.CurrentEnemyState.PhysicsUpdate();
     }
 
-    #region Health and Die Functions
+    #region Helper Functions
 
     public void Damage(float damageAmount)
     {
@@ -153,6 +155,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void Die()
     {
         Destroy(gameObject);
+    }
+
+    public void SetAttackDamage(int damage)
+    {
+        CurrentAttackDamage = damage;
     }
 
     #endregion

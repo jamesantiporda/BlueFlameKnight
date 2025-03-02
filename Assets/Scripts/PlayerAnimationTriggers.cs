@@ -129,7 +129,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
             WeaponToEnemy attack = other.gameObject.GetComponent<WeaponToEnemy>();
             Vector3 attackDirection;
 
-            int damage = 500;
+            int damage = 250;
 
             if (attack != null)
             {
@@ -144,27 +144,21 @@ public class PlayerAnimationTriggers : MonoBehaviour
                 if (attack.ReturnAttackType() == Enemy.Attack.Normal)
                 {
                     _animator.SetInteger("DamageType", 0);
-
-                    damage = 500;
                 }
                 else if (attack.ReturnAttackType() == Enemy.Attack.Knockback)
                 {
                     _animator.SetInteger("DamageType", 1);
-
-                    damage = 750;
                 }
                 else if (attack.ReturnAttackType() == Enemy.Attack.Launch)
                 {
                     _animator.SetInteger("DamageType", 2);
-
-                    damage = 1000;
                 }
                 else
                 {
                     _animator.SetInteger("DamageType", 0);
-
-                    damage = 500;
                 }
+
+                damage = attack.enemy.CurrentAttackDamage;
             }
             else
             {

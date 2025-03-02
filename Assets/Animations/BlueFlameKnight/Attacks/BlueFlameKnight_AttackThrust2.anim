@@ -114469,6 +114469,13 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
+  - time: 0.25
+    functionName: SetAttackDamage
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 750
+    messageOptions: 0
   - time: 0.5
     functionName: PlayFootstep
     data: 
@@ -114538,6 +114545,13 @@ AnimationClip:
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
+    messageOptions: 0
+  - time: 1.875
+    functionName: SetAttackDamage
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 250
     messageOptions: 0
   - time: 2.0416667
     functionName: SetAttackType
@@ -114665,6 +114679,13 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
+  - time: 4.2916665
+    functionName: SetAttackDamage
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 750
+    messageOptions: 0
   - time: 4.375
     functionName: SetAttackType
     data: 
@@ -114680,13 +114701,6 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 4.5416665
-    functionName: PlayFootstep
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 4.5416665
     functionName: StopTracking
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -114695,6 +114709,13 @@ AnimationClip:
     messageOptions: 0
   - time: 4.5416665
     functionName: PlayWeaponSlam
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 4.5416665
+    functionName: PlayFootstep
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

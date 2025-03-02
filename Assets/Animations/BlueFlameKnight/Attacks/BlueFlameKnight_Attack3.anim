@@ -60423,6 +60423,13 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
+  - time: 0.083333336
+    functionName: SetAttackDamage
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 750
+    messageOptions: 0
   - time: 0.5
     functionName: PlayFootstep
     data: 
@@ -60464,6 +60471,13 @@ AnimationClip:
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
+    messageOptions: 0
+  - time: 1.6666666
+    functionName: SetAttackDamage
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 500
     messageOptions: 0
   - time: 1.8333334
     functionName: PlayFootstep

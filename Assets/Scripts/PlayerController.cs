@@ -496,6 +496,7 @@ namespace itsSALT.FinalCharacterController
 
         public void TakeDamage(int damage)
         {
+            IsDrinking = false;
             _health.TakeDamage(damage);
         }
 

@@ -8,7 +8,7 @@ public class Stamina : MonoBehaviour
 
     public int maxStamina = 100;
     public int currentStamina;
-    public int staminaRegenRate = 2;
+    public float staminaRegenRate = 200;
 
     private float staminaCooldown = 1f;
     private float staminaTimer = 0f;
@@ -27,7 +27,7 @@ public class Stamina : MonoBehaviour
         {
             if(currentStamina < maxStamina)
             {
-                currentStamina += staminaRegenRate;
+                currentStamina += (int) (staminaRegenRate * Time.deltaTime);
                 staminaBar.SetHealth(currentStamina);
             }
         }
