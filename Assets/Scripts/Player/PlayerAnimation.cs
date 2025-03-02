@@ -8,6 +8,10 @@ namespace itsSALT.FinalCharacterController
     {
         [SerializeField] private Animator _animator;
         [SerializeField] private float locomotionBlendSpeed = 0.02f;
+        [SerializeField] private GameObject flaskObject;
+        [SerializeField] private Material flaskFilledMat;
+        [SerializeField] private Material flaskEmptyMat;
+        [SerializeField] private Flask flasks;
 
         private PlayerLocomotionInput _playerLocomotionInput;
         private PlayerCombatInput _playerCombatInput;
@@ -52,7 +56,7 @@ namespace itsSALT.FinalCharacterController
 
             Vector2 inputTarget = isSprinting ? _playerLocomotionInput.MovementInput * 1.5f :
                                   isRunning ? _playerLocomotionInput.MovementInput * 1f :
-                                  _playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking ? _playerLocomotionInput.MovementInput * 0.35f :
+                                  _playerController.IsDrinking ? _playerLocomotionInput.MovementInput * 0.35f :
                                   _playerLocomotionInput.MovementInput * 0.5f;
             inputTarget = new Vector2(inputTarget.x/10, inputTarget.y/10);
 
@@ -60,7 +64,7 @@ namespace itsSALT.FinalCharacterController
 
             //Debug.Log("input: " + inputTarget);
 
-            if(_playerCombatInput.LightAttackInput && !_playerController.IsLockedInAnimation && _playerController.ReturnStamina() > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking)
+            if(_playerCombatInput.LightAttackInput && _playerController.ReturnStamina() > 0 && !_playerController.IsDrinking && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged && _playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
             {
                 _playerState.SetPlayerMovementState(PlayerMovementState.Attacking);
                 //_playerController.DecreaseStamina(250);
@@ -72,6 +76,22 @@ namespace itsSALT.FinalCharacterController
                 _playerLocomotionInput.ForceDisableSprint();
                 _playerState.SetPlayerMovementState(PlayerMovementState.Drinking);
                 _animator.SetTrigger("Drink");
+
+                if(flasks.ReturnCurrentFlasks() > 0)
+                {
+                    foreach (Transform child in flaskObject.transform)
+                    {
+                        child.gameObject.GetComponent<MeshRenderer>().material = flaskFilledMat;
+                    }
+                }
+                else
+                {
+                    foreach (Transform child in flaskObject.transform)
+                    {
+                        child.gameObject.GetComponent<MeshRenderer>().material = flaskEmptyMat;
+                    }
+                }
+                
             }
 
             _animator.SetBool(isRollingHash, isRolling);

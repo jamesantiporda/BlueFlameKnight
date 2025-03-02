@@ -41,6 +41,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
     public void StopAttack()
     {
         _animator.SetBool("isAttacking", false);
+        ResetAnimationTriggers();
         _playerController.StopAttacking();
     }
 
@@ -144,7 +145,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
                 {
                     _animator.SetInteger("DamageType", 0);
 
-                    damage = 250;
+                    damage = 500;
                 }
                 else if (attack.ReturnAttackType() == Enemy.Attack.Knockback)
                 {
@@ -162,7 +163,7 @@ public class PlayerAnimationTriggers : MonoBehaviour
                 {
                     _animator.SetInteger("DamageType", 0);
 
-                    damage = 100;
+                    damage = 500;
                 }
             }
             else

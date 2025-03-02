@@ -20520,7 +20520,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 1250
     messageOptions: 0
-  - time: 1.6666666
+  - time: 1.6166667
     functionName: UnlockPlayer
     data: 
     objectReferenceParameter: {fileID: 0}

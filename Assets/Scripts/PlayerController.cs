@@ -73,11 +73,13 @@ namespace itsSALT.FinalCharacterController
         private Vector2 _cameraRotation = Vector2.zero;
         private Vector2 _playerTargetRotation = Vector2.zero;
         private bool sprinting = false;
-        private Vector2 rollDirection = Vector2.zero;
+        private Vector3 rollDirection = Vector3.zero;
         private Vector2 _playerTargetDirection = Vector2.zero;
         public Vector3 knockbackDirection = Vector3.zero;
 
         private float _rotatingToTargetTimer = 0f;
+
+        public bool IsDrinking { get; private set; } = false;
         #endregion
 
         #region Startup
@@ -127,13 +129,13 @@ namespace itsSALT.FinalCharacterController
 
         private void UpdateMovementState()
         {
-            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsAttacking && !IsLockedInAnimation && _playerState.CurrentPlayerMovementState != PlayerMovementState.Dead)
+            if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsLockedInAnimation && _playerState.CurrentPlayerMovementState != PlayerMovementState.Dead)
             {
                 bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;
                 bool isMovingLaterally = IsMovingLaterally();
                 bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally && _stamina.currentStamina > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking;
                 bool isGrounded = IsGrounded();
-                bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput && _stamina.currentStamina > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking;
+                bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput && _stamina.currentStamina > 0 && !IsDrinking;
                 bool isStrafing = _playerLocomotionInput.LockToggledOn && isMovingLaterally;
                 bool isDrinking = _playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking;
 
@@ -195,18 +197,18 @@ namespace itsSALT.FinalCharacterController
                 }
 
                 // Slow down if drinking flask
-                if (_playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking)
+                if (IsDrinking)
                 {
                     newVelocity = newVelocity * 0.5f;
                 }
 
                 //Debug.Log("Target Dir: " + _playerTargetDirection);
 
-                if (!IsAttacking && !IsLockedInAnimation)
+                if (!IsLockedInAnimation)
                 {
                     if (_playerState.CurrentPlayerMovementState == PlayerMovementState.Rolling)
                     {
-                        Vector3 rollDirection3D = new Vector3(rollDirection.x, 0.0f, rollDirection.y);
+                        Vector3 rollDirection3D = new Vector3(rollDirection.x, 0.0f, rollDirection.z);
                         rollDirection3D.Normalize();
 
                         if (IsMovingRolling)
@@ -257,9 +259,15 @@ namespace itsSALT.FinalCharacterController
             Vector3 targetDirection = new Vector3(_playerTargetDirection.x, 0.0f, _playerTargetDirection.y);
             targetDirection.Normalize();
 
-            if(IsMovingLaterally() || IsAttacking || _rotatingToTargetTimer > 0)
+            if(IsMovingLaterally() || _rotatingToTargetTimer > 0)
             {
-                Vector3 lockDirectionProj = _targetEnemy.transform.position - transform.position;
+                Vector3 lockDirectionProj = Vector3.zero;
+
+                if(_targetEnemy != null)
+                {
+                    lockDirectionProj = _targetEnemy.transform.position - transform.position;
+                }
+
                 lockDirectionProj = new Vector3(lockDirectionProj.x, 0.0f, lockDirectionProj.z);
                 lockDirectionProj.Normalize();
 
@@ -330,13 +338,13 @@ namespace itsSALT.FinalCharacterController
         public void StartAttacking()
         {
             _playerLocomotionInput.ForceDisableSprint();
-            IsAttacking = true;
+            //IsAttacking = true;
             _playerState.SetPlayerMovementState(PlayerMovementState.Attacking);
         }
 
         public void StopAttacking()
         {
-            IsAttacking = false;
+            //IsAttacking = false;
 
             if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged)
             {
@@ -346,11 +354,14 @@ namespace itsSALT.FinalCharacterController
 
         public void StartDrinking()
         {
+            //IsLockedInAnimation = true;
+            IsDrinking = true;
             _playerState.SetPlayerMovementState(PlayerMovementState.Drinking);
         }
 
         public void StopDrinking()
         {
+            IsDrinking = false;
             if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged)
             {
                 _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
@@ -446,7 +457,10 @@ namespace itsSALT.FinalCharacterController
 
             _stamina.DecreaseStamina(200);
 
-            rollDirection = new Vector2(_characterController.velocity.x, _characterController.velocity.z);
+            Vector3 cameraForwardXZ = new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
+            Vector3 cameraRightXZ = new Vector3(_playerCamera.transform.right.x, 0f, _playerCamera.transform.right.z).normalized;
+            rollDirection = cameraRightXZ * _playerLocomotionInput.MovementInput.x + cameraForwardXZ * _playerLocomotionInput.MovementInput.y;
+            rollDirection = new Vector3(rollDirection.x, 0.0f, rollDirection.z);
             rollDirection = rollDirection.normalized;
 
             yield return new WaitForSeconds(rollCooldown);

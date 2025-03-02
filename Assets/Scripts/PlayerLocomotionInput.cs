@@ -25,6 +25,7 @@ namespace itsSALT.FinalCharacterController
         private float sprintDelay = 0.5f;
 
         public Enemy enemy;
+        public FieldOfView fieldOfView;
         #endregion
 
         #region Startup
@@ -112,7 +113,7 @@ namespace itsSALT.FinalCharacterController
             if (!context.performed)
                 return;
 
-            if(!enemy.IsDead)
+            if(!enemy.IsDead && fieldOfView.CanSeePlayer)
             {
                 LockToggledOn = !LockToggledOn;
             }

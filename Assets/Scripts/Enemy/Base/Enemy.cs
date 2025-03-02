@@ -36,6 +36,9 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     protected Health _health;
 
+    private float damageCDTimer = 0.0f;
+    private float damageCD = 0.1f;
+
     #region State Machine Variables
 
     public EnemyStateMachine StateMachine { get; set; }
@@ -123,6 +126,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
             IsDead = true;
             StateMachine.ChangeState(DieState);
         }
+
+        if(damageCDTimer > 0)
+        {
+            damageCDTimer -= Time.deltaTime;
+        }
     }
 
     private void FixedUpdate()
@@ -206,13 +214,18 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public void Flinch()
     {
-        damageCounter++;
+        if ((damageCDTimer <= 0.0f))
+        {
+            damageCounter++;
 
-        SoundFXManager.instance.PlaySoundFXClip(damagedSFX, transform, 0.5f);
+            SoundFXManager.instance.PlaySoundFXClip(damagedSFX, transform, 0.5f);
 
-        _health.TakeDamage(1000);
+            _health.TakeDamage(1000);
 
-        animator.Play("Flinch", 1, 0);
+            animator.Play("Flinch", 1, 0);
+
+            damageCDTimer = damageCD;
+        }
     }
 
     public void SetAnimationBool(string name, bool value)

@@ -48,4 +48,9 @@ public class Flask : MonoBehaviour
             flasksText.text = "" + currentFlasks;
         }
     }
+
+    public int ReturnCurrentFlasks()
+    {
+        return currentFlasks;
+    }
 }
