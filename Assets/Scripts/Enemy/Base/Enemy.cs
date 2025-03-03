@@ -83,6 +83,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     [SerializeField] private AudioClip[] footstepsSFX;
     [SerializeField] private AudioClip[] bladeSwingSFX;
     [SerializeField] private AudioClip[] bladeSlamSFX;
+    [SerializeField] private AudioClip deathSFX;
 
     private void Awake()
     {
@@ -126,6 +127,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         if(_health.currentHealth <= 0f && !IsDead)
         {
             IsDead = true;
+            SoundFXManager.instance.PlaySoundFXClip(deathSFX, transform, 0.5f);
             StateMachine.ChangeState(DieState);
         }
 

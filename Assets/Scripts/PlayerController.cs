@@ -82,6 +82,8 @@ namespace itsSALT.FinalCharacterController
         private float _rotatingToTargetTimer = 0f;
 
         public bool IsDrinking { get; private set; } = false;
+
+        [SerializeField] private AudioClip deathSFX;
         #endregion
 
         #region Startup
@@ -349,7 +351,7 @@ namespace itsSALT.FinalCharacterController
 
         public void StopAttacking()
         {
-            Debug.Log("CALLED");
+            //Debug.Log("CALLED");
 
             IsAttacking = false;
 
@@ -453,6 +455,7 @@ namespace itsSALT.FinalCharacterController
             _playerLocomotionInput.ForceDisableLock();
             MovePlayer(Vector3.zero, 0);
             _animator.SetBool("isDead", true);
+            SoundFXManager.instance.PlaySoundFXClip(deathSFX, transform, 0.5f);
             _playerState.SetPlayerMovementState(PlayerMovementState.Dead);
         }
         #endregion
