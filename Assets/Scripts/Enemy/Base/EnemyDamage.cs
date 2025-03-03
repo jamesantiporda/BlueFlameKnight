@@ -21,7 +21,7 @@ public class EnemyDamage : MonoBehaviour
     {
         if (other.gameObject.tag == "PlayerAttack")
         {
-            Debug.Log("hit!");
+            //Debug.Log("hit!");
             enemy.Flinch();
         }
 

@@ -34,7 +34,7 @@ public class BlueFlameKnight : Enemy
 
         StateMachine.Initialize(DeactivatedState);
 
-        Debug.Log(transform.forward);
+        //Debug.Log(transform.forward);
 
         IsAggroed = false;
 

@@ -122,6 +122,9 @@ namespace itsSALT.FinalCharacterController
 
                 MovePlayer(knockbackDir, knockbackSpeed);
             }
+
+            //Debug.Log("attacking: " + IsAttacking);
+            //Debug.Log("moveable: " + IsMoveable);
         }
 
         public void MovePlayer(Vector3 direction, float speed)
@@ -134,12 +137,12 @@ namespace itsSALT.FinalCharacterController
             if(_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && !IsLockedInAnimation && _playerState.CurrentPlayerMovementState != PlayerMovementState.Dead)
             {
                 bool isMovementInput = _playerLocomotionInput.MovementInput != Vector2.zero;
-                bool isMovingLaterally = IsMovingLaterally();
-                bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally && _stamina.currentStamina > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking;
+                bool isMovingLaterally = IsMovingLaterally() && !IsAttacking;
+                bool isSprinting = _playerLocomotionInput.SprintInput && isMovingLaterally && _stamina.currentStamina > 0 && _playerState.CurrentPlayerMovementState != PlayerMovementState.Drinking && !IsAttacking;
                 bool isGrounded = IsGrounded();
                 bool isRolling =  _playerLocomotionInput.RollInput && isMovementInput && _stamina.currentStamina > 0 && !IsDrinking;
-                bool isStrafing = _playerLocomotionInput.LockToggledOn && isMovingLaterally;
-                bool isDrinking = _playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking;
+                bool isStrafing = _playerLocomotionInput.LockToggledOn && isMovingLaterally && !IsAttacking;
+                bool isDrinking = _playerState.CurrentPlayerMovementState == PlayerMovementState.Drinking && !IsAttacking;
 
                 if(isRolling)
                 {
@@ -221,7 +224,7 @@ namespace itsSALT.FinalCharacterController
                     else
                     {
                         // Move character (unity says only call this once per frame)
-                        if (IsMoveable)
+                        if (IsMoveable && !IsAttacking)
                         {
                             _characterController.Move(newVelocity * _playerLocomotionInput.MovementInput.magnitude / 10 * Time.deltaTime);
                         }
@@ -340,13 +343,15 @@ namespace itsSALT.FinalCharacterController
         public void StartAttacking()
         {
             _playerLocomotionInput.ForceDisableSprint();
-            //IsAttacking = true;
+            IsAttacking = true;
             _playerState.SetPlayerMovementState(PlayerMovementState.Attacking);
         }
 
         public void StopAttacking()
         {
-            //IsAttacking = false;
+            Debug.Log("CALLED");
+
+            IsAttacking = false;
 
             if (_playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged)
             {

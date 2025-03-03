@@ -67,6 +67,7 @@ namespace itsSALT.FinalCharacterController
             if(_playerCombatInput.LightAttackInput && _playerController.ReturnStamina() > 0 && !_playerController.IsDrinking && _playerState.CurrentPlayerMovementState != PlayerMovementState.Damaged && _playerState.CurrentPlayerMovementState != PlayerMovementState.Rolling)
             {
                 _playerState.SetPlayerMovementState(PlayerMovementState.Attacking);
+                //_playerController.StartAttacking();
                 //_playerController.DecreaseStamina(250);
                 _animator.SetTrigger("LightAttack");
             }
