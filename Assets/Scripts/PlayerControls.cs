@@ -264,7 +264,7 @@ namespace itsSALT.FinalCharacterController
                 {
                     ""name"": """",
                     ""id"": ""89c45890-2052-4265-8f12-778d422e17a2"",
-                    ""path"": ""<Keyboard>/p"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

@@ -13,6 +13,8 @@ public class UIManager : MonoBehaviour
 
     public GameObject enemyHP;
 
+    public GameObject deathScreen;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +37,7 @@ public class UIManager : MonoBehaviour
             settingsPanel.SetActive(!settingsPanel.activeSelf);
         }
 
-        if(settingsPanel.activeSelf)
+        if(settingsPanel.activeSelf || deathScreen.activeSelf)
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
