@@ -12,6 +12,9 @@ public class BFKChaseState : EnemyChaseState
 
     private float _outOfRangeTimer = 0.0f;
 
+    private float decisionCooldown = 1.0f;
+    private float decisionTimer = 0.0f;
+
     public BFKChaseState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -27,6 +30,7 @@ public class BFKChaseState : EnemyChaseState
         enemy.SetAnimationTrigger("Run");
 
         _outOfRangeTimer = 0.0f;
+        decisionTimer = 0.0f;
     }
 
     public override void ExitState()
@@ -37,6 +41,8 @@ public class BFKChaseState : EnemyChaseState
     public override void FrameUpdate()
     {
         base.FrameUpdate();
+
+        decisionTimer += Time.deltaTime;
 
         Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
 
@@ -69,9 +75,9 @@ public class BFKChaseState : EnemyChaseState
         {
             _outOfRangeTimer += Time.deltaTime;
 
-            if (_outOfRangeTimer > 2.5f || _playerController.ReturnIsDrinking())
+            if (_outOfRangeTimer > 2.5f || (_playerController.ReturnIsDrinking() && decisionTimer >= decisionCooldown))
             {
-                int range_attack_random = Random.Range(0, 3);
+                int range_attack_random = Random.Range(0, 2);
 
                 if (range_attack_random == 0)
                 {
@@ -79,6 +85,8 @@ public class BFKChaseState : EnemyChaseState
 
                     enemy.StateMachine.ChangeState(enemy.AttackState);
                 }
+
+                decisionTimer = 0.0f;
             }
         }
 

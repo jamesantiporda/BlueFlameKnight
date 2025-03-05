@@ -50,36 +50,6 @@ public class BFKReadyState : EnemyReadyState
     {
         base.FrameUpdate();
 
-        // RETREAT DECISION
-
-        if (enemy.damageCounter >= enemy.damageThreshold)
-        {
-            int retreat_random = Random.Range(0, 4);
-
-            if (retreat_random == 0)
-            {
-                enemy.StateMachine.ChangeState(enemy.RetreatState);
-
-                return;
-            }
-        }
-
-        // RANGE ATTACK DECISION
-
-        if (_playerController.ReturnIsDrinking())
-        {
-            int ranged_random = Random.Range(0, 4);
-
-            if (ranged_random == 0)
-            {
-                enemy.SetAnimationInt("AttackNo", -2);
-
-                enemy.StateMachine.ChangeState(enemy.AttackState);
-
-                return;
-            }
-        }
-
         Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
 
         Vector3 targetDirection = (targetPosition - enemy.transform.position).normalized;
@@ -98,9 +68,47 @@ public class BFKReadyState : EnemyReadyState
 
             enemy.MoveEnemy(Vector3.zero);
 
+            // RETREAT DECISION
+
+            if (enemy.damageCounter >= enemy.damageThreshold)
+            {
+                int retreat_random = Random.Range(0, 4);
+
+                if (retreat_random == 0)
+                {
+                    enemy.StateMachine.ChangeState(enemy.RetreatState);
+
+                    return;
+                }
+            }
+
+            // RANGE ATTACK DECISION
+
+            if (_playerController.ReturnIsDrinking())
+            {
+                //Debug.Log("I SEE U");
+                int ranged_random = Random.Range(0, 2);
+
+                if (ranged_random == 0)
+                {
+                    enemy.SetAnimationInt("AttackNo", -2);
+
+                    enemy.StateMachine.ChangeState(enemy.AttackState);
+
+                    return;
+                }
+            }
+
             _decision = Random.Range(0, 5);
 
             _decisionTimer = Random.Range(1.0f, 2f);
+
+
+            // Force walk backwards if player is too close
+            if (_decision == 2 && Vector3.Distance(enemy.transform.position, _playerTransform.transform.position) < 1.0f)
+            {
+                _decision = 3;
+            }
 
             switch (_decision)
             {
@@ -147,16 +155,6 @@ public class BFKReadyState : EnemyReadyState
             default:
                 break;
         }
-
-        if (Vector3.Distance(enemy.transform.position, _playerTransform.transform.position) < 1.0f)
-        {
-            if (_decision == 2)
-            {
-                enemy.SetAnimationTrigger("WalkBackward");
-                enemy.MoveEnemy(-enemy.transform.forward * _speed);
-            }
-        }
-
 
 
         if (!enemy.IsWithinStrikingDistance)
