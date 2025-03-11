@@ -3934,7 +3934,7 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 1
   rangedAttackObject: {fileID: 870755244036614894, guid: adeb612095afe6e4e8f8708d1b1faff1, type: 3}
   rangedAttackEmissionPoint: {fileID: 1443748868}
-  isActivated: 1
+  isActivated: 0
   RandomMovementRange: 5
   RandomMovementSpeed: 1
   RotationSpeed: 1
@@ -10930,6 +10930,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: DummyCamera
   m_TagString: Untagged
@@ -11035,6 +11036,25 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   targetObject: {fileID: 0}
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1eb899d9a0a35a409bf257d2e98fb02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemy: {fileID: 642327206}
+  player: {fileID: 2019009403}
+  _playerLocomotionInput: {fileID: 2019009402}
+  lookSenseH: 0.1
+  lookSenseV: 0.1
+  lookLimitV: 70
+  lockSpeed: 5
 --- !u!1 &989451471
 GameObject:
   m_ObjectHideFlags: 0
@@ -17421,6 +17441,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _animator: {fileID: 1963444234}
+  cinemachineCamera: {fileID: 385582462}
   runAcceleration: 35
   runSpeed: 2
   drag: 15

@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -26,6 +27,8 @@ namespace itsSALT.FinalCharacterController
         private Stamina _stamina;
         [SerializeField]
         private Animator _animator;
+        [SerializeField]
+        private CinemachineVirtualCamera cinemachineCamera;
 
         public float RotationMismatch { get; private set; } = 0f;
         public bool IsRotatingToTarget { get; private set; } = false;
@@ -248,13 +251,13 @@ namespace itsSALT.FinalCharacterController
         #region Late Update
         private void LateUpdate()
         {
-            UpdateCameraRotation();
+            UpdatePlayerRotation();
         }
 
-        private void UpdateCameraRotation()
+        private void UpdatePlayerRotation()
         {
-            _cameraRotation.x += lookSenseH * _playerLocomotionInput.LookInput.x;
-            _cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * _playerLocomotionInput.LookInput.y, -lookLimitV, lookLimitV);
+            //_cameraRotation.x += lookSenseH * _playerLocomotionInput.LookInput.x;
+            //_cameraRotation.y = Mathf.Clamp(_cameraRotation.y - lookSenseV * _playerLocomotionInput.LookInput.y, -lookLimitV, lookLimitV);
 
             _playerTargetRotation.x += transform.eulerAngles.x + lookSenseH * _playerLocomotionInput.LookInput.x;
 
@@ -297,28 +300,6 @@ namespace itsSALT.FinalCharacterController
                     _rotatingToTargetTimer = rotateToTargetTime;
                 }
                 _rotatingToTargetTimer -= Time.deltaTime;
-
-            }
-
-            if(_playerLocomotionInput.LockToggledOn && !IsDead)
-            {
-                Vector3 lockDirection = _targetEnemy.transform.position - _playerCamera.transform.position;
-
-                lockDirection.Normalize();
-
-                Quaternion cameraFinalRotation = Quaternion.LookRotation(lockDirection);
-
-                _playerCamera.transform.rotation = cameraFinalRotation; //Quaternion.Lerp(_playerCamera.transform.rotation, cameraFinalRotation, playerModelRotationSpeed * Time.deltaTime);
-
-                Vector3 euler = _playerCamera.transform.rotation.eulerAngles;
-
-                _cameraRotation = new Vector2(euler.y, euler.x);
-
-                //_playerCamera.transform.rotation = Quaternion.Slerp(_playerCamera.transform.rotation, cameraFinalRotation, Time.deltaTime * lockSpeed);
-            }
-            else
-            {
-                _playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f);
             }
 
             Vector3 camForwardProjectedXZ = new Vector3(_playerCamera.transform.forward.x, 0f, _playerCamera.transform.forward.z).normalized;
