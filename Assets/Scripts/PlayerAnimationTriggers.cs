@@ -215,6 +215,9 @@ public class PlayerAnimationTriggers : MonoBehaviour
             //new_player_pos += -_playerController.transform.right;
 
             _playerController.WarpToPosition(new_player_pos);
+
+            _playerController.SnapTowardsTarget(attack.enemy.transform.position);
+
             _playerController.ForceLockOnDisable();
 
             _animator.SetTrigger("Grabbed");

@@ -18,8 +18,6 @@ namespace itsSALT.FinalCharacterController
         [SerializeField]
         private Camera _playerCamera;
         [SerializeField]
-        private GameObject _targetEnemy;
-        [SerializeField]
         private Transform groundCheck;
         [SerializeField]
         private LayerMask groundMask;
@@ -29,6 +27,10 @@ namespace itsSALT.FinalCharacterController
         private Animator _animator;
         [SerializeField]
         private CinemachineVirtualCamera cinemachineCamera;
+        [SerializeField]
+        private FieldOfView _fieldOfView;
+
+        private GameObject _targetEnemy;
 
         public float RotationMismatch { get; private set; } = 0f;
         public bool IsRotatingToTarget { get; private set; } = false;
@@ -97,6 +99,8 @@ namespace itsSALT.FinalCharacterController
             _playerState = GetComponent<PlayerState>();
             _health = GetComponent<Health>();
             _stamina = GetComponent<Stamina>();
+
+            _targetEnemy = null;
         }
         #endregion
 
@@ -269,7 +273,16 @@ namespace itsSALT.FinalCharacterController
             Vector3 targetDirection = new Vector3(_playerTargetDirection.x, 0.0f, _playerTargetDirection.y);
             targetDirection.Normalize();
 
-            if(IsMovingLaterally() || _rotatingToTargetTimer > 0)
+            if(_playerLocomotionInput.LockToggledOn)
+            {
+                _targetEnemy = _fieldOfView.targetObject;
+            }
+            else
+            {
+                _targetEnemy = null;
+            }
+
+            if (IsMovingLaterally() || _rotatingToTargetTimer > 0)
             {
                 Vector3 lockDirectionProj = Vector3.zero;
 
@@ -512,6 +525,11 @@ namespace itsSALT.FinalCharacterController
         public bool IsMoving()
         {
             return _characterController.velocity != Vector3.zero;
+        }
+
+        public GameObject ReturnTargetEnemy()
+        {
+            return _targetEnemy;
         }
         #endregion
     }

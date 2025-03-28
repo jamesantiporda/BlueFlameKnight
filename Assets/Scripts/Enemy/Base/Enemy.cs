@@ -6,6 +6,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckable
 {
     [field: SerializeField] public float MaxHealth { get; set; } = 100f;
+    public Transform LockOnPoint;
     public float CurrentHealth { get; set; }
 
     public GameObject rangedAttackObject;

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class LockOnPoint : MonoBehaviour
 {
-    public GameObject target;
+    private GameObject target;
 
     public PlayerLocomotionInput playerLocomotionInput;
 
@@ -14,24 +14,35 @@ public class LockOnPoint : MonoBehaviour
 
     public PlayerController playerController;
 
-    public Enemy enemy;
+    private Enemy enemy;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        target = null;
+        enemy = null;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(playerLocomotionInput.LockToggledOn && !playerController.IsDead && !enemy.IsDead)
+        if(playerLocomotionInput.LockToggledOn && !playerController.IsDead)
         {
-            point.SetActive(true);
-            transform.position = Camera.main.WorldToScreenPoint(target.transform.position);
+            if(playerController.ReturnTargetEnemy() != null)
+            {
+                target = playerController.ReturnTargetEnemy();
+
+                enemy = target.GetComponent<ComponentToEnemy>().enemy;
+
+                point.SetActive(true);
+                transform.position = Camera.main.WorldToScreenPoint(target.GetComponent<ComponentToEnemy>().lockOnPointUI.position);
+            }
         }
         else
         {
+            target = null;
+            enemy = null;
+
             point.SetActive(false);
         }
     }

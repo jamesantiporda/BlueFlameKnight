@@ -43,7 +43,7 @@ public class BFKAttackState : EnemyAttackState
         }
 
         // FORCE ATTACK
-        //enemy.SetAnimationInt("AttackNo", 1);
+        //enemy.SetAnimationInt("AttackNo", 5);
 
         enemy.SetAnimationTrigger("Attack");
 

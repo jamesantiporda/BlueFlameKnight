@@ -82,6 +82,15 @@ namespace itsSALT.FinalCharacterController
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchTarget"",
+                    ""type"": ""Value"",
+                    ""id"": ""30b89724-02a5-4991-99cb-3654fa6e4f81"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -282,6 +291,61 @@ namespace itsSALT.FinalCharacterController
                     ""action"": ""Settings"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Arrows"",
+                    ""id"": ""b8e9ca08-aeea-4431-8600-fb6c325b12ab"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchTarget"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""ee854edf-4f06-4e17-8b30-46be216028fa"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""9c38ca4e-7315-4774-9854-1fbf985c4284"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""a89e3371-2554-4810-8572-9947e4086ad6"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""5927680b-d5a5-4d27-886f-91d673cc425b"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -366,6 +430,7 @@ namespace itsSALT.FinalCharacterController
             m_PlayerLocomotionMap_Sprint = m_PlayerLocomotionMap.FindAction("Sprint", throwIfNotFound: true);
             m_PlayerLocomotionMap_ToggleLock = m_PlayerLocomotionMap.FindAction("ToggleLock", throwIfNotFound: true);
             m_PlayerLocomotionMap_Settings = m_PlayerLocomotionMap.FindAction("Settings", throwIfNotFound: true);
+            m_PlayerLocomotionMap_SwitchTarget = m_PlayerLocomotionMap.FindAction("SwitchTarget", throwIfNotFound: true);
             // PlayerCombatMap
             m_PlayerCombatMap = asset.FindActionMap("PlayerCombatMap", throwIfNotFound: true);
             m_PlayerCombatMap_LightAttack = m_PlayerCombatMap.FindAction("LightAttack", throwIfNotFound: true);
@@ -437,6 +502,7 @@ namespace itsSALT.FinalCharacterController
         private readonly InputAction m_PlayerLocomotionMap_Sprint;
         private readonly InputAction m_PlayerLocomotionMap_ToggleLock;
         private readonly InputAction m_PlayerLocomotionMap_Settings;
+        private readonly InputAction m_PlayerLocomotionMap_SwitchTarget;
         public struct PlayerLocomotionMapActions
         {
             private @PlayerControls m_Wrapper;
@@ -447,6 +513,7 @@ namespace itsSALT.FinalCharacterController
             public InputAction @Sprint => m_Wrapper.m_PlayerLocomotionMap_Sprint;
             public InputAction @ToggleLock => m_Wrapper.m_PlayerLocomotionMap_ToggleLock;
             public InputAction @Settings => m_Wrapper.m_PlayerLocomotionMap_Settings;
+            public InputAction @SwitchTarget => m_Wrapper.m_PlayerLocomotionMap_SwitchTarget;
             public InputActionMap Get() { return m_Wrapper.m_PlayerLocomotionMap; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -474,6 +541,9 @@ namespace itsSALT.FinalCharacterController
                 @Settings.started += instance.OnSettings;
                 @Settings.performed += instance.OnSettings;
                 @Settings.canceled += instance.OnSettings;
+                @SwitchTarget.started += instance.OnSwitchTarget;
+                @SwitchTarget.performed += instance.OnSwitchTarget;
+                @SwitchTarget.canceled += instance.OnSwitchTarget;
             }
 
             private void UnregisterCallbacks(IPlayerLocomotionMapActions instance)
@@ -496,6 +566,9 @@ namespace itsSALT.FinalCharacterController
                 @Settings.started -= instance.OnSettings;
                 @Settings.performed -= instance.OnSettings;
                 @Settings.canceled -= instance.OnSettings;
+                @SwitchTarget.started -= instance.OnSwitchTarget;
+                @SwitchTarget.performed -= instance.OnSwitchTarget;
+                @SwitchTarget.canceled -= instance.OnSwitchTarget;
             }
 
             public void RemoveCallbacks(IPlayerLocomotionMapActions instance)
@@ -575,6 +648,7 @@ namespace itsSALT.FinalCharacterController
             void OnSprint(InputAction.CallbackContext context);
             void OnToggleLock(InputAction.CallbackContext context);
             void OnSettings(InputAction.CallbackContext context);
+            void OnSwitchTarget(InputAction.CallbackContext context);
         }
         public interface IPlayerCombatMapActions
         {

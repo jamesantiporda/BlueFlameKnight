@@ -11,7 +11,11 @@ namespace itsSALT.FinalCharacterController
         #region Class Variables
         public PlayerControls PlayerControls { get; private set; }
         public Vector2 MovementInput { get; private set; }
+
+        public Vector2 TargetSwitchInput { get; private set; }
         public Vector2 LookInput { get; private set; }
+
+        public Vector2 totalLookInput { get; private set; }
         public bool SprintInput { get; private set; }
 
         public bool RollInput { get; private set; }
@@ -136,6 +140,11 @@ namespace itsSALT.FinalCharacterController
         public void ForceDisableSprint()
         {
             SprintInput = false;
+        }
+
+        public void OnSwitchTarget(InputAction.CallbackContext context)
+        {
+            TargetSwitchInput = context.ReadValue<Vector2>();
         }
     }
 }
