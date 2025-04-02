@@ -11,7 +11,7 @@ public class HealthBar : MonoBehaviour
 
     public int yellowShowThreshold = 1000;
 
-    public int yellowCatchupRate = 100;
+    public int yellowCatchupRate = 2000;
 
     private float yellowCatchupTime = 0.5f;
 

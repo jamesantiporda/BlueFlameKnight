@@ -8,7 +8,7 @@ public class Health : MonoBehaviour
 
     public int maxHealth = 100;
     public int currentHealth;
-    public int healIncreaseRate = 2;
+    public float healIncreaseRate = 200;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,7 @@ public class Health : MonoBehaviour
     {
         if(currentHealth > healthBar.slider.value)
         {
-            healthBar.AddToBothRedAndYellow(healIncreaseRate);
+            healthBar.AddToBothRedAndYellow((int) (healIncreaseRate * Time.deltaTime));
         }
     }
 

@@ -220,7 +220,7 @@ namespace itsSALT.FinalCharacterController
                     ""id"": ""6dca0b72-2611-49eb-9531-afd1cb5be809"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": ""ScaleVector2(x=3,y=3)"",
+                    ""processors"": ""ScaleVector2(x=30,y=30)"",
                     ""groups"": """",
                     ""action"": ""StickLook"",
                     ""isComposite"": false,

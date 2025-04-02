@@ -64,6 +64,10 @@ public class FieldOfView : MonoBehaviour
         }
 
         List<Transform> seenTargets = new List<Transform>();
+        Transform target = null;
+
+        float minDistance = Mathf.Infinity;
+        int targetIndex = 0;
 
         for (int i = 0; i < numColliders; i++)
         {
@@ -77,9 +81,18 @@ public class FieldOfView : MonoBehaviour
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstructionMask))
                 {
                     seenTargets.Add(potentialTarget);
+                    if(distanceToTarget < minDistance)
+                    {
+                        minDistance = distanceToTarget;
+                        targetIndex = i;
+                    }
                 }
             }
         }
+
+        Debug.Log("Target to lock: " + targetIndex);
+
+        target = rangeChecks[targetIndex].transform;
 
         if (seenTargets.Count == 0)
         {
@@ -89,6 +102,7 @@ public class FieldOfView : MonoBehaviour
         }
 
         // Find best target based on priority
+        /*
         Transform target = null;
         float maxPriority = float.MinValue;
 
@@ -108,6 +122,7 @@ public class FieldOfView : MonoBehaviour
                 maxPriority = priority;
             }
         }
+        */
 
         targetObject = target != null ? target.gameObject : null;
         CanSeePlayer = targetObject != null;
