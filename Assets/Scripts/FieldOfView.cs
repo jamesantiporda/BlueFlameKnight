@@ -90,7 +90,7 @@ public class FieldOfView : MonoBehaviour
             }
         }
 
-        Debug.Log("Target to lock: " + targetIndex);
+        //Debug.Log("Target to lock: " + targetIndex);
 
         target = rangeChecks[targetIndex].transform;
 

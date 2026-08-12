@@ -294,13 +294,21 @@ namespace itsSALT.FinalCharacterController
                 lockDirectionProj = new Vector3(lockDirectionProj.x, 0.0f, lockDirectionProj.z);
                 lockDirectionProj.Normalize();
 
-                Quaternion targetRotationX = Quaternion.LookRotation(lockDirectionProj);
+                Quaternion targetRotationX = Quaternion.identity;
+
+                if(lockDirectionProj != Vector3.zero)
+                {
+                    targetRotationX = Quaternion.LookRotation(lockDirectionProj);
+                }
 
                 Quaternion finalRotation = Quaternion.LookRotation(targetDirection);
 
                 if(_playerState.CurrentPlayerMovementState == PlayerMovementState.Strafing || (_playerState.CurrentPlayerMovementState == PlayerMovementState.Idling && _playerLocomotionInput.LockToggledOn))
                 {
-                    finalRotation = targetRotationX;
+                    if(targetRotationX != Quaternion.identity)
+                    {
+                        finalRotation = targetRotationX;
+                    }
                 }
 
                 if (!IsLockedInAnimation)

@@ -16,6 +16,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public Animator animator { get; set; }
 
+    public CharacterController characterController { get; set; }
+
     public bool IsAggroed { get; set; }
     public bool IsWithinStrikingDistance { get; set; }
 
@@ -26,6 +28,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public bool IsMovingWhileAttacking { get; set; }
 
     public bool isActivated = false;
+    public bool UsesCharacterController = false;
 
     public bool IsDead { get; set; }
 
@@ -106,6 +109,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
         RB = GetComponent<Rigidbody>();
 
+        characterController = GetComponent<CharacterController>();
+
         animator = GetComponent<Animator>();
 
         _health = GetComponent<Health>();
@@ -181,7 +186,15 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
         //Debug.Log("MOVE");
 
-        RB.velocity = velocity;
+
+        if (UsesCharacterController)
+        {
+            characterController.Move(velocity * Time.deltaTime);
+        }
+        else
+        {
+            RB.velocity = velocity;
+        }
     }
 
     public void RotateEnemy(Vector3 targetDirection, float speed)

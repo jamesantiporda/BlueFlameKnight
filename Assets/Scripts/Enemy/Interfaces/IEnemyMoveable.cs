@@ -6,5 +6,7 @@ public interface IEnemyMoveable
 {
     Rigidbody RB { get; set; }
 
+    CharacterController characterController { get; set; }
+
     void MoveEnemy(Vector3 velocity);
 }
