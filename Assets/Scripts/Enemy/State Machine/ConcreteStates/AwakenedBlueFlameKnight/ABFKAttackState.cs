@@ -32,7 +32,7 @@ public class ABFKAttackState : EnemyAttackState
         {
             int randomAttack = 0;
 
-            randomAttack = Random.Range(0, 5);
+            randomAttack = Random.Range(2, 5);
 
             enemy.SetAnimationInt("AttackNo", randomAttack);
         }

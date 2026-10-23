@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public CharacterController characterController { get; set; }
 
+    private Transform playerTransform;
+
     public bool IsAggroed { get; set; }
     public bool IsWithinStrikingDistance { get; set; }
 
@@ -34,7 +36,14 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public int CurrentAttackDamage { get; private set; } = 0;
 
+    public float TargetOffset { get; private set; } = 0f;
+
     protected bool isTouchingPlayer = false;
+
+    private Transform currentTarget;
+    private bool isMovingToTarget = false;
+
+    private float moveToPointSpeed = 2f;
 
     public enum Attack { Normal, Knockback, Launch }
 
@@ -117,16 +126,20 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
         StateMachine.Initialize(DeactivatedState);
 
-        Debug.Log(transform.forward);
+        //Debug.Log(transform.forward);
 
         IsAggroed = false;
 
         IsDead = false;
+
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     private void Update()
     {
         StateMachine.CurrentEnemyState.FrameUpdate();
+
+        Debug.Log(currentTarget);
 
         SetGrabPosition();
 
@@ -146,6 +159,24 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     private void FixedUpdate()
     {
         StateMachine.CurrentEnemyState.PhysicsUpdate();
+
+        if(isMovingToTarget && currentTarget != null)
+        {
+            Vector3 move_direction = currentTarget.position - transform.position;
+
+            move_direction = new Vector3(move_direction.x, 0.0f, move_direction.z);
+
+            move_direction.Normalize();
+
+            if (UsesCharacterController)
+            {
+                characterController.Move(move_direction * moveToPointSpeed * Time.deltaTime);
+            }
+            else
+            {
+                RB.velocity = move_direction * moveToPointSpeed;
+            }
+        }
     }
 
     #region Helper Functions
@@ -199,13 +230,28 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
 
     public void RotateEnemy(Vector3 targetDirection, float speed)
     {
+        targetDirection.y = 0f;
+
+        if (targetDirection.sqrMagnitude < 0.001f)
+            return;
+
+        targetDirection.Normalize();
+
+        Vector3 offsetDirection =
+            Quaternion.AngleAxis(TargetOffset, Vector3.up) * targetDirection;
+
         float singleStep = RotationSpeed * speed * Time.deltaTime;
 
-        Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+        Vector3 newDirection = Vector3.RotateTowards(
+            transform.forward,
+            offsetDirection,
+            singleStep,
+            0f
+        );
 
-        Debug.DrawRay(transform.position, newDirection, Color.red);
+        float newAngle = Mathf.Atan2(newDirection.x, newDirection.z) * Mathf.Rad2Deg;
 
-        transform.rotation = Quaternion.LookRotation(newDirection);
+        transform.rotation = Quaternion.Euler(0f, newAngle, 0f);
     }
 
     public void RotateEnemyClockwise(float speed)
@@ -229,6 +275,29 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     protected virtual void SetGrabPosition()
     {
 
+    }
+
+    public void StartMoveEnemyTowardsTarget(float speed)
+    {
+        isMovingToTarget = true;
+
+        moveToPointSpeed = speed;
+    }
+
+    public void EndMoveEnemyTowardsTarget()
+    {
+        currentTarget = null;
+        isMovingToTarget = false;
+    }
+
+    public void SetTargetToPlayer()
+    {
+        if(playerTransform == null)
+        {
+            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+
+        currentTarget = playerTransform;
     }
 
     #endregion
@@ -295,6 +364,8 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void StopTracking()
     {
         IsTracking = false;
+
+        ResetTargetOffset();
     }
 
     public void StartMovingWhileAttacking()
@@ -335,6 +406,16 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         {
             currentAttackType = Attack.Normal;
         }
+    }
+
+    public void SetTargetOffset(float offset)
+    {
+        TargetOffset = offset;
+    }
+
+    public void ResetTargetOffset()
+    {
+        TargetOffset = 0;
     }
 
     public void SetIsTouchingPlayer(bool val)

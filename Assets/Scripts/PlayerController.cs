@@ -466,7 +466,7 @@ namespace itsSALT.FinalCharacterController
 
         private IEnumerator Roll()
         {
-            Debug.Log("ROLLING");
+            //Debug.Log("ROLLING");
 
             _stamina.DecreaseStamina(200);
 
@@ -478,7 +478,7 @@ namespace itsSALT.FinalCharacterController
 
             yield return new WaitForSeconds(rollCooldown);
 
-            Debug.Log("STOP ROLLING");
+            //Debug.Log("STOP ROLLING");
 
             _playerState.SetPlayerMovementState(PlayerMovementState.Idling);
         }

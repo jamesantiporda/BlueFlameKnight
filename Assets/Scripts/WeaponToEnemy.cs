@@ -16,12 +16,6 @@ public class WeaponToEnemy : MonoBehaviour
         grabPosition = enemy.transform.position + enemy.transform.forward * grabPositionScaling.y + enemy.transform.right * grabPositionScaling.x;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public Enemy.Attack ReturnAttackType()
     {
         return enemy.ReturnAttackType();
