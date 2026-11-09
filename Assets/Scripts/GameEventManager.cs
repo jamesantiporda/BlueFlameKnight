@@ -10,6 +10,7 @@ public class GameEventManager : MonoBehaviour
 
     public event Action OnPlayerDeath;
     public event Action OnPlayerWin;
+    public event Action OnBossDeath;
 
     public PlayerLocomotionInput playerLocomotionInput;
 
@@ -33,6 +34,13 @@ public class GameEventManager : MonoBehaviour
     public void PlayerWon()
     {
         OnPlayerWin?.Invoke();
+
+        playerLocomotionInput.ForceDisableLock();
+    }
+
+    public void BossDeath()
+    {
+        OnBossDeath?.Invoke();
 
         playerLocomotionInput.ForceDisableLock();
     }

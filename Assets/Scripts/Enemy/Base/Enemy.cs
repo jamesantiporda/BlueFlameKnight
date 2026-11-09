@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static Enemy;
 
 public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckable
 {
@@ -41,9 +42,19 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     protected bool isTouchingPlayer = false;
 
     private Transform currentTarget;
+    private Vector3 currentTargetDirection;
+    private Vector3 currentTargetPosition;
+    private bool isMovingToDirection = false;
     private bool isMovingToTarget = false;
+    private bool isMovingToPosition = false;
 
     private float moveToPointSpeed = 2f;
+    
+    private Vector2 targetPositionOffset = Vector2.zero;
+    private Vector3 startingPosition = Vector3.zero;
+    private float moveToPointTime = 0f;
+    private float moveToPointTimer = 0f;
+    private float maxDistance = 1000f;
 
     public enum Attack { Normal, Knockback, Launch }
 
@@ -98,6 +109,19 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     [SerializeField] private AudioClip[] bladeSlamSFX;
     [SerializeField] private AudioClip deathSFX;
 
+    #region Attack Logic
+
+    // With your other fields:
+    [SerializeField] private List<BossAttack> attacks;
+
+    private AttackSelector _attackSelector;
+    public AttackSelector AttackSelector => _attackSelector ??= new AttackSelector(attacks);
+
+    public bool hasOpeningAttack = false;
+    public int openingAttackIndex;
+
+    #endregion
+
     private void Awake()
     {
         StateMachine = new EnemyStateMachine();
@@ -133,13 +157,28 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         IsDead = false;
 
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+
+        currentTargetDirection = transform.forward;
+        currentTargetDirection = new Vector3(currentTargetDirection.x, 0.0f, currentTargetDirection.z);
+        currentTargetDirection.Normalize();
+
+        currentTargetPosition = Vector3.zero;
+
+        targetPositionOffset = Vector2.zero;
+        startingPosition = transform.position;
+
+        isMovingToDirection = false;
+        isMovingToTarget = false;
+        isMovingToPosition = false;
+
+        moveToPointTime = 0;
+        moveToPointTimer = 0;
+        maxDistance = 1000f;
     }
 
     private void Update()
     {
         StateMachine.CurrentEnemyState.FrameUpdate();
-
-        Debug.Log(currentTarget);
 
         SetGrabPosition();
 
@@ -160,6 +199,7 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     {
         StateMachine.CurrentEnemyState.PhysicsUpdate();
 
+        // Hard targeting (tracking player movement)
         if(isMovingToTarget && currentTarget != null)
         {
             Vector3 move_direction = currentTarget.position - transform.position;
@@ -176,6 +216,29 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
             {
                 RB.velocity = move_direction * moveToPointSpeed;
             }
+        }
+
+        // Soft targeting (only goes toward a set direction)
+        if(isMovingToDirection)
+        {
+            MoveEnemy(currentTargetDirection * moveToPointSpeed);
+        }
+
+        // Move to a target point
+        if(isMovingToPosition && moveToPointTime > 0)
+        {
+            float t = moveToPointTimer / moveToPointTime;
+
+            t = Mathf.Clamp01(t);
+
+            transform.position = Vector3.Lerp(startingPosition, currentTargetPosition, t);
+            
+            if(t >= 1f)
+            {
+                EndMoveEnemyToPoint();
+            }
+
+            moveToPointTimer += Time.fixedDeltaTime;
         }
     }
 
@@ -290,6 +353,41 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         isMovingToTarget = false;
     }
 
+    public void StartMoveEnemyTowardsDirection(float speed)
+    {
+        isMovingToDirection = true;
+
+        moveToPointSpeed = speed;
+    }
+
+    public void EndMoveEnemyTowardsDirection()
+    {
+        currentTargetDirection = transform.forward;
+        currentTargetDirection = new Vector3(currentTargetDirection.x, 0.0f, currentTargetDirection.z);
+        currentTargetDirection.Normalize();
+
+        isMovingToDirection = false;
+    }
+
+    public void StartMoveEnemyToPoint(float moveTime)
+    {
+        isMovingToPosition = true;
+
+        moveToPointTime = moveTime;
+
+        moveToPointTimer = 0f;
+
+        startingPosition = transform.position;
+    }
+
+    public void EndMoveEnemyToPoint()
+    {
+        isMovingToPosition = false;
+        targetPositionOffset = Vector2.zero;
+        moveToPointTime = 0f;
+        maxDistance = 1000f;
+    }
+
     public void SetTargetToPlayer()
     {
         if(playerTransform == null)
@@ -298,6 +396,64 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
         }
 
         currentTarget = playerTransform;
+    }
+
+    public void SetTargetDirectionToPlayer()
+    {
+        if (playerTransform == null)
+        {
+            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+
+        currentTargetDirection = playerTransform.position - transform.position;
+        currentTargetDirection = new Vector3(currentTargetDirection.x, 0.0f, currentTargetDirection.z);
+        currentTargetDirection.Normalize();
+    }
+
+    public void SetTargetPointToPlayer()
+    {
+        if(playerTransform == null)
+        {
+            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+
+        currentTargetPosition = playerTransform.position;
+
+        currentTargetPosition = new Vector3(currentTargetPosition.x, transform.position.y, currentTargetPosition.z);
+
+        Vector3 direction = currentTargetPosition - transform.position;
+
+        // Clamp to max distance
+        currentTargetPosition = transform.position + Vector3.ClampMagnitude(direction, maxDistance);
+    }
+
+    public void SetMaxDistanceToTargetPoint(float distance)
+    {
+        maxDistance = distance;
+    }
+
+    public void SetTargetPositionOffsetX(float x)
+    {
+        targetPositionOffset = new Vector2(x, targetPositionOffset.y);
+    }
+
+    public void SetTargetPositionOffsetZ(float z)
+    {
+        targetPositionOffset = new Vector2(targetPositionOffset.x, z);
+    }
+
+    public void SetTargetToDirectionX(float x)
+    {
+        currentTargetDirection = new Vector3(x, 0.0f, currentTargetDirection.z);
+
+        currentTargetDirection.Normalize();
+    }
+
+    public void SetTargetToDirectionZ(float z)
+    {
+        currentTargetDirection = new Vector3(currentTargetDirection.x, 0.0f, z);
+
+        currentTargetDirection.Normalize();
     }
 
     #endregion
@@ -446,6 +602,11 @@ public class Enemy : MonoBehaviour, IDamageable, IEnemyMoveable, ITriggerCheckab
     public void ConfirmDeath()
     {
         GameEventManager.Instance.PlayerWon();
+    }
+
+    public void StartDeathSequence()
+    {
+        GameEventManager.Instance.BossDeath();
     }
 
     public Vector3 ReturnGrabPosition()

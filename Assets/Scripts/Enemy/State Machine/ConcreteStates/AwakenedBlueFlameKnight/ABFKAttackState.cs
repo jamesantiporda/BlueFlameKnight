@@ -7,6 +7,9 @@ public class ABFKAttackState : EnemyAttackState
     private float _attackTimer;
     private Transform _playerTransform;
     private float _movementSpeed = 1.75f;
+    private BossAttack _currentAttack;
+
+    private bool openerUsed = false;
 
     public ABFKAttackState(Enemy enemy, EnemyStateMachine enemyStateMachine) : base(enemy, enemyStateMachine)
     {
@@ -25,28 +28,50 @@ public class ABFKAttackState : EnemyAttackState
         Debug.Log("Attack State");
 
         _attackTimer = 0.0f;
-
         enemy.MoveEnemy(Vector3.zero);
 
-        if (enemy.animator.GetInteger("AttackNo") >= 0)
+        if (enemy.AttackSelector == null)
         {
-            int randomAttack = 0;
-
-            randomAttack = Random.Range(2, 5);
-
-            enemy.SetAnimationInt("AttackNo", randomAttack);
+            Debug.LogError("AttackSelector is null on " + enemy.name, enemy);
+            return;
         }
 
-        // FORCE ATTACK
-        //enemy.SetAnimationInt("AttackNo", 5);
+        var ctx = AttackContext.Build(enemy, _playerTransform);
 
+        if (enemy.hasOpeningAttack && !openerUsed)
+        {
+            _currentAttack = enemy.AttackSelector.ReturnOpeningAttack(enemy.openingAttackIndex);
+            openerUsed = true;
+        }
+        else
+        {
+            _currentAttack = enemy.AttackSelector.Choose(ctx);
+        }
+
+        Debug.Log($"Chose: {(_currentAttack == null ? "NOTHING" : _currentAttack.name)} | distance {ctx.distance:F1} | hp {ctx.hpPercent:F2}");
+
+
+        if (_currentAttack == null)
+        {
+            // Nothing valid right now: reposition instead of forcing an attack
+            Debug.Log("No valid attack, going to ChaseState");
+            enemy.StateMachine.ChangeState(enemy.ChaseState);
+            return;
+        }
+
+        enemy.SetAnimationInt("AttackNo", _currentAttack.attackNo);
         enemy.SetAnimationTrigger("Attack");
-
         enemy.IsAttacking = true;
     }
 
     public override void ExitState()
     {
+        if (_currentAttack != null)
+        {
+            enemy.AttackSelector.RegisterUsed(_currentAttack);
+            _currentAttack = null;
+        }
+
         enemy.SetAnimationInt("AttackNo", 0);
 
         base.ExitState();
@@ -59,7 +84,6 @@ public class ABFKAttackState : EnemyAttackState
         _attackTimer += Time.deltaTime;
 
         Vector3 targetPosition = new Vector3(_playerTransform.position.x, 0f, _playerTransform.position.z);
-
         Vector3 moveDirection = (targetPosition - enemy.transform.position).normalized;
 
         // Running attack

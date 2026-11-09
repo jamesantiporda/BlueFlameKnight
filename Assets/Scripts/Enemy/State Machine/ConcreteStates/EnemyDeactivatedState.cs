@@ -30,7 +30,10 @@ public class EnemyDeactivatedState : EnemyState
 
         if (enemy.isActivated)
         {
-            enemy.StateMachine.ChangeState(enemy.IdleState);
+            if (enemy.hasOpeningAttack)
+                enemy.StateMachine.ChangeState(enemy.AttackState);
+            else
+                enemy.StateMachine.ChangeState(enemy.IdleState);
         }
     }
 

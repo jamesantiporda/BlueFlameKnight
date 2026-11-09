@@ -82,23 +82,6 @@ public class ABFKReadyState : EnemyReadyState
                 }
             }
 
-            // RANGE ATTACK DECISION
-
-            if (_playerController.ReturnIsDrinking())
-            {
-                //Debug.Log("I SEE U");
-                int ranged_random = Random.Range(0, 2);
-
-                if (ranged_random == 0)
-                {
-                    enemy.SetAnimationInt("AttackNo", -2);
-
-                    enemy.StateMachine.ChangeState(enemy.AttackState);
-
-                    return;
-                }
-            }
-
             _decision = Random.Range(0, 5);
 
             _decisionTimer = Random.Range(1.0f, 2f);

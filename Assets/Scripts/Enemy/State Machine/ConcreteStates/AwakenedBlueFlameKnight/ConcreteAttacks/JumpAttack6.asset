@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93059d52f04105448ac620d870c47b9d, type: 3}
+  m_Name: JumpAttack6
+  m_EditorClassIdentifier: 
+  attackNo: 6
+  cooldown: 4
+  baseWeight: 1
+  conditions:
+  - rid: 4163519792690233415
+  modifiers: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 4163519792690233415
+      type: {class: OrCondition, ns: , asm: Assembly-CSharp}
+      data:
+        conditions:
+        - rid: 4163519792690233416
+        - rid: 4163519792690233417
+    - rid: 4163519792690233416
+      type: {class: RangeCondition, ns: , asm: Assembly-CSharp}
+      data:
+        min: 0
+        max: 10
+    - rid: 4163519792690233417
+      type: {class: PlayerHealingCondition, ns: , asm: Assembly-CSharp}
+      data: 

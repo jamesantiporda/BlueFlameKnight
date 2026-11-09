@@ -227,7 +227,7 @@ public class FieldOfView : MonoBehaviour
         {
             if (playerLocomotionInput.LookInput.magnitude >= targetSwitchThreshold && playerLocomotionInput.LockToggledOn)
             {
-                Debug.Log("Switch input: " + playerLocomotionInput.LookInput.x);
+                //Debug.Log("Switch input: " + playerLocomotionInput.LookInput.x);
                 targetSwitchTimer = targetSwitchCooldown;
                 SwitchTarget(playerLocomotionInput.LookInput.x >= 0);
             }

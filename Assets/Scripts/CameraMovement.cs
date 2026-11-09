@@ -47,7 +47,7 @@ public class CameraMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void LateUpdate()
@@ -72,7 +72,7 @@ public class CameraMovement : MonoBehaviour
 
             _playerCamera.transform.rotation = Quaternion.Euler(_cameraRotation.y, _cameraRotation.x, 0f);
         }
-        else if(fov.targetObject != null && !player.IsDead) // && _rotatingToTargetTimer > 0)
+        else if (fov.targetObject != null && !player.IsDead) // && _rotatingToTargetTimer > 0)
         {
             //enemy = fov.targetObject;
 
@@ -80,7 +80,7 @@ public class CameraMovement : MonoBehaviour
 
             enemy = compToEnemy.enemy;
 
-            if(!enemy.IsDead)
+            if (!enemy.IsDead)
             {
                 Vector3 lockDirection = enemy.LockOnPoint.position - _playerCamera.transform.position;
 
